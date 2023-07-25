@@ -1,0 +1,120 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;500;600;700&display=swap");
+.homescreen-container {
+  font-family: "Poppins", sans-serif !important;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  @media screen and (min-width: 481px) {
+    .arrowClose {
+      position: absolute;
+      left: 270px;
+      top: 10px;
+      z-index: 99;
+      cursor: pointer;
+      font-size: 32px;
+    }
+    .arrowOpen {
+      position: absolute;
+      left: 30px;
+      top: 10px;
+      z-index: 99;
+      cursor: pointer;
+      font-size: 32px;
+    }
+  }
+  @media screen and (max-width: 480px) {
+    .left {
+      width: 100vw !important;
+    }
+    .arrowClose {
+      position: absolute;
+      right: 10px !important;
+      top: 5px;
+      z-index: 99;
+      cursor: pointer;
+      font-size: 32px;
+    }
+    .arrowOpen {
+      position: absolute;
+      left: 5px;
+      top: 5px;
+      z-index: 99;
+      cursor: pointer;
+      font-size: 32px;
+    }
+  }
+  .left {
+    display: flex;
+    flex-direction: column;
+    width: 330px;
+    min-width: 330px;
+    background-color: white;
+    border-radius: 0 10px 10px 0;
+    box-shadow: 3px 0 15px rgba(0, 0, 0, 0.082);
+    overflow: auto;
+    &::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    &::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 5px grey;
+      border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background: #eee;
+    }
+    nav {
+      font-family: "Poppins", sans-serif;
+      padding: 16px 0px;
+      flex-direction: column;
+      flex: 1;
+      justify-content: flex-start;
+      color: black;
+      .MuiListItemIcon-root {
+        color: black;
+      }
+      .Mui-selected {
+        font-family: "Poppins", sans-serif;
+        color: #eee;
+        font-weight: 500;
+        background: linear-gradient(
+          90deg,
+          rgba(47, 159, 163, 0.2) 0%,
+          rgba(47, 159, 163, 0) 30%,
+          rgba(47, 159, 163, 0.1) 100%
+        );
+        .MuiListItemIcon-root {
+          color: #eee;
+        }
+      }
+    }
+    .logo {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 0;
+      img {
+        width: 50%;
+      }
+    }
+    .header-account {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  .right {
+    flex: 1;
+    width: calc(100% - 330px);
+    overflow: hidden;
+    position: relative;
+  }
+}
+.MuiTypography-root {
+  font-family: "Poppins", sans-serif !important;
+}

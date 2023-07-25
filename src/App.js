@@ -1,24 +1,62 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
 
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./components/authentification/authentification";
+import Home from "./components/home";
+import User from "./components/user/user";
+import UserDetails from "./components/user/userDetails";
+import Meeting from "./components/meeting/meeting";
+import Project from "./components/project/project";
+import TechnicalTest from "./components/technicalTest/technicalTest";
+import Leave from "./components/leave/leave";
+import Interview from "./components/interview/interview";
+import Complaint from "./components/complaint/complaint";
+import Absence from "./components/absence/absence";
+import Poste from "./components/poste/poste";
+import QuestionResponse from "./components/questionResponse/questionResponse";
+import Navigation from "./components/navigation/navigation";
+import SignUp from "./components/Sign up/signup";
+import CreateQuestionResponse from "./components/technicalTest/createQuestionPesponse";
+import ListesQuesRep from "./components/technicalTest/listesQuestRep";
+import CreatetechnicalTest from "./components/technicalTest/createTechnicalTest";
+import CreateProject from "./components/project/addproject";
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route exact path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+
+        <Route path="/dashboard" element={<Navigation />}>
+          <Route path="/dashboard/user" element={<User />} />
+          <Route path="/dashboard/userDetail" element={<UserDetails />} />
+          <Route path="/dashboard/meeting" element={<Meeting />} />
+          <Route path="/dashboard/project" element={<Project />} />
+          <Route path="/dashboard/techtest" element={<TechnicalTest />} />
+          <Route path="/dashboard/leave" element={<Leave />} />
+          <Route path="/dashboard/interview" element={<Interview />} />
+          <Route path="/dashboard/complaint" element={<Complaint />} />
+          <Route path="/dashboard/absence" element={<Absence />} />
+          <Route path="/dashboard/poste" element={<Poste />} />
+          <Route path="/dashboard/listequesrep" element={<ListesQuesRep />} />
+          <Route path="/dashboard/addproject" element={<CreateProject />} />
+
+          <Route
+            path="/dashboard/createQuesRep"
+            element={<CreateQuestionResponse />}
+          />
+          <Route
+            path="/dashboard/questionResponse"
+            element={<QuestionResponse />}
+          />
+          <Route
+            path="/dashboard/createTechnicalTest"
+            element={<CreatetechnicalTest />}
+          />
+        </Route>
+      </Routes>
+    </Router>
   );
 }
 

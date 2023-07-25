@@ -1,0 +1,65 @@
+.home-page {
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  .navbar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    .logo {
+      width: 40%;
+      display: flex;
+      justify-content: flex-start;
+      align-items: start;
+    }
+    .buttons {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 30px;
+      margin-right: 30px;
+    }
+  }
+  .callToAction {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    .title {
+      color: #4b7abe;
+      font-family: "Poppins", Helvetica;
+      font-size: 30px;
+      font-weight: 550px;
+      text-align: center;
+    }
+    img {
+      width: 60%;
+    }
+  }
+}
+
+.home-page .overlap {
+  background-color: #4b7abe;
+  border-radius: 11.5px;
+  height: 30px;
+  width: 100px;
+  color: #ffffff;
+  font-family: "Poppins", Helvetica;
+}
+.home-page .overlap-group {
+  border: 0.2px solid;
+  border-color: #4b7abe;
+  background-color: #ffffff;
+  border-radius: 11.5px;
+  height: 30px;
+  width: 100px;
+  color: #4b7abe;
+  font-family: "Poppins", Helvetica;
+  font-size: 12px;
+  font-weight: 400px;
+}
