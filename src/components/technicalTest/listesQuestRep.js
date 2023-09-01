@@ -142,22 +142,6 @@ function ListesQuesRep({ match }) {
       minWidth: 400,
       flex: 1,
     },
-
-    {
-      field: "actions",
-      type: "actions",
-      width: 20,
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<Visibility />}
-          onClick={async () => {
-            console.log("aa");
-          }}
-          label={"Marquer comme lu"}
-          showInMenu
-        />,
-      ],
-    },
   ];
 
   return (

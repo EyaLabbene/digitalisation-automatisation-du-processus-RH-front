@@ -12,8 +12,9 @@ import { Visibility } from "@mui/icons-material";
 
 import "./leave.scss";
 
-function Leave({ match }) {
-  const [loading, setLoading] = useState(false);
+function Leave() {
+  const [reload, setReload] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [pageSize, setPageSize] = useState(10);
   const [dataRows, setDataRows] = useState([]);
   const StyledGridOverlay = styled(GridOverlay)(({ theme }) => ({
@@ -98,16 +99,15 @@ function Leave({ match }) {
     );
   }
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     const fetchData = async () => {
       const response = await api.get(`/leave`);
       setDataRows(response.data);
+      setLoading(false);
     };
 
     fetchData();
-  }, [match]);
+  }, [reload]);
 
   const dataColumns = [
     {
@@ -166,9 +166,21 @@ function Leave({ match }) {
         <GridActionsCellItem
           icon={<Visibility />}
           onClick={async () => {
-            console.log("aa");
+            setLoading(true);
+            await api.put(`/leave/${params.id}`, { answer: "accepted" });
+            setReload(reload + 1);
           }}
-          label={"Marquer comme lu"}
+          label={"Accepter"}
+          showInMenu
+        />,
+        <GridActionsCellItem
+          icon={<Visibility />}
+          onClick={async () => {
+            setLoading(true);
+            await api.put(`/leave/${params.id}`, { answer: "refused" });
+            setReload(reload + 1);
+          }}
+          label={"Refuser"}
           showInMenu
         />,
       ],

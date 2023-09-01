@@ -39,8 +39,12 @@ function Login() {
       .post("/authentification", { email, password })
       .then((response) => {
         setAuthToken(response.data.token);
-        // window.localStorage.setItem("token", "bearer " + response.data.token);
-        navigate("/dashboard/user");
+        if (response.data.role === "admin") {
+          navigate("/dashboard/user");
+        } else {
+          navigate("/dashboardCandidate");
+        }
+
         console.log(response.data);
       })
       .catch((error) => {

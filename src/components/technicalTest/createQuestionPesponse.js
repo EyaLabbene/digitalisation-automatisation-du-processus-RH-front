@@ -54,7 +54,7 @@ export default function CreateQuestionResponse() {
         good_answer,
         mark,
       });
-
+      navigate("/dashboard/listequesrep");
       console.log(response.data);
       setQuestion("");
       setOne("");

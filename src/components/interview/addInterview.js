@@ -34,39 +34,60 @@ const MenuProps = {
   },
 };
 
-export default function CreateProject() {
+export default function CreateInterview() {
   useEffect(() => {
     getData();
   }, []);
   async function getData() {
     const response = await api.get(`/user`);
     console.log(response.data);
-    setListEmployee(response.data);
+    setListUser(response.data);
   }
   const theme = useTheme();
-  const [employee, setEmployee] = useState([]);
-  const [listEmpolyee, setListEmployee] = useState([]);
+  const [interviewer, setInterviewer] = useState([]);
+  const [interviewee, setInterviewee] = useState([]);
+  const [listUser, setListUser] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
-    console.log(employee);
-  }, [employee]);
+    console.log(interviewer);
+  }, [interviewer]);
+  useEffect(() => {
+    console.log(interviewee);
+  }, [interviewee]);
   const handleChange = (event) => {
     const {
       target: { value },
     } = event;
-    setEmployee(
+    setInterviewer(
       // On autofill we get a stringified value.
       typeof value === "string" ? value.split(",") : value
     );
   };
-  const handleChangeTitle = (event) => {
+  const handleChangeInterviewee = (event) => {
     const {
       target: { value },
     } = event;
-    setTitle(value);
+    setInterviewee(
+      // On autofill we get a stringified value.
+      typeof value === "string" ? value.split(",") : value
+    );
   };
-  const [title, setTitle] = useState("");
-  const fetchEmployee = async () => {
+
+  const handleChangeStart = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setStart(value);
+  };
+  const handleChangeEnd = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setEnd(value);
+  };
+  const [start_date, setStart] = useState("");
+  const [end_date, setEnd] = useState("");
+  const fetchUser = async () => {
     let data = null; // Initialisation de la variable data
 
     try {
@@ -77,18 +98,21 @@ export default function CreateProject() {
       console.error("Erreur lors de la récupération des employés :", error);
     }
 
-    setEmployee(data);
-    fetchEmployee();
+    setListUser(data);
+    fetchUser();
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post("/project", {
-        employee,
-        title,
+      const response = await api.post("/interview", {
+        interviewer,
+        interviewee,
+        start_date,
+        end_date,
       });
-      navigate("/dashboard/project");
+
+      navigate("/dashboard/interview");
     } catch (error) {
       console.error(error);
     }
@@ -111,29 +135,66 @@ export default function CreateProject() {
           </Typography>
           <form onSubmit={handleSubmit}>
             <Grid item xs={12}>
+              <div>De</div>
               <TextField
-                autoComplete="title"
-                name="title"
+                autoComplete="start_date"
+                name="start_date"
                 required
                 fullWidth
-                id="title"
-                label="Tittre"
-                value={title}
-                onChange={handleChangeTitle}
+                type="datetime-local"
+                id="start_date"
+                // label="De"
+                value={start_date}
+                onChange={handleChangeStart}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <div>jusqu'à</div>
+
+              <TextField
+                fullWidth
+                autoComplete="end_date"
+                name="end_date"
+                required
+                type="datetime-local"
+                id="end_date"
+                // label="jusqu à"
+                value={end_date}
+                onChange={handleChangeEnd}
               />
             </Grid>
             <div>
               <FormControl sx={{ m: 1, width: 300 }}>
-                <InputLabel id="multiselectEmployeeLabel">Employés</InputLabel>
+                <InputLabel id="multiselectUserLabel">Recruteur</InputLabel>
                 <Select
-                  labelId="multiselectEmployeeLabel"
-                  id="multiselectEmployee"
-                  value={employee}
+                  labelId="multiselectUserLabel"
+                  id="multiselectUser"
+                  fullWidth
+                  value={interviewer}
                   onChange={handleChange}
                   input={<OutlinedInput label="Name" />}
                   MenuProps={MenuProps}
                 >
-                  {listEmpolyee.map((user) => (
+                  {listUser.map((user) => (
+                    <MenuItem key={user._id} value={user._id}>
+                      {user.first_name + " " + user.last_name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+            <div>
+              <FormControl sx={{ m: 1, width: 300 }}>
+                <InputLabel id="multiselectUserLabel">Candidat</InputLabel>
+                <Select
+                  labelId="multiselectUserLabel"
+                  id="multiselectUser"
+                  value={interviewee}
+                  onChange={handleChangeInterviewee}
+                  input={<OutlinedInput label="Name" />}
+                  MenuProps={MenuProps}
+                >
+                  {listUser.map((user) => (
                     <MenuItem key={user._id} value={user._id}>
                       {user.first_name + " " + user.last_name}
                     </MenuItem>

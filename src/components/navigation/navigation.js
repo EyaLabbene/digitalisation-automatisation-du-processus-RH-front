@@ -192,7 +192,7 @@ export default function HomeScreen() {
                   sx={{ pl: 4 }}
                   selected={location.pathname === paths.ajoutproduits}
                   onClick={() => {
-                    navigate("/dashboard/interview");
+                    navigate("/dashboard/addInterview");
                   }}
                 >
                   <ListItemIcon>
@@ -221,13 +221,13 @@ export default function HomeScreen() {
                   <ListItemIcon>
                     <Inventory />
                   </ListItemIcon>
-                  <ListItemText primary="Inventaire" />
+                  <ListItemText primary="Les Postes" />
                 </ListItemButton>
                 <ListItemButton
                   sx={{ pl: 4 }}
                   selected={location.pathname === paths.ajoutstock}
                   onClick={() => {
-                    navigate("/dashboard/poste");
+                    navigate("/dashboard/addPoste");
                   }}
                 >
                   <ListItemIcon>
@@ -383,65 +383,19 @@ export default function HomeScreen() {
                   <ListItemIcon>
                     <Event />
                   </ListItemIcon>
-                  <ListItemText primary="Liste des Événements" />
+                  <ListItemText primary="Liste des Réunions" />
                 </ListItemButton>
                 <ListItemButton
                   sx={{ pl: 4 }}
                   selected={location.pathname === paths.ajoutstock}
                   onClick={() => {
-                    navigate("/dashboard/ajoutevenements");
+                    navigate("/dashboard/addMeeting");
                   }}
                 >
                   <ListItemIcon>
                     <AddCircle />
                   </ListItemIcon>
                   <ListItemText primary="Ajouter une réunion" />
-                </ListItemButton>
-              </List>
-            </Collapse>
-            <ListItemButton
-              selected={location.pathname === paths.roles}
-              onClick={() => {
-                navigate("/dashboard/roles");
-              }}
-            >
-              <ListItemIcon>
-                <PersonPin />
-              </ListItemIcon>
-              <ListItemText primary="Roles" />
-            </ListItemButton>
-            <ListItemButton onClick={handleClickStatistiques}>
-              <ListItemIcon>
-                <StackedBarChart />
-              </ListItemIcon>
-              <ListItemText primary="Statistiques" />
-              {openStatistiques ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-            <Collapse in={openStatistiques} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                <ListItemButton
-                  selected={location.pathname === paths.statistiquesCommandes}
-                  sx={{ pl: 4 }}
-                  onClick={() => {
-                    navigate("/dashboard/statistiquesCommandes");
-                  }}
-                >
-                  <ListItemIcon>
-                    <History />
-                  </ListItemIcon>
-                  <ListItemText primary="Statistiques des ventes" />
-                </ListItemButton>
-                <ListItemButton
-                  sx={{ pl: 4 }}
-                  selected={location.pathname === paths.statistiquesEmployes}
-                  onClick={() => {
-                    navigate("/dashboard/statistiquesEmployes");
-                  }}
-                >
-                  <ListItemIcon>
-                    <Group />
-                  </ListItemIcon>
-                  <ListItemText primary="statistiques des employés" />
                 </ListItemButton>
               </List>
             </Collapse>

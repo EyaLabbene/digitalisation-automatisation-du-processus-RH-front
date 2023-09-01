@@ -111,6 +111,15 @@ function Meeting({ match }) {
 
   const dataColumns = [
     {
+      field: "employee",
+      headerName: "Employés",
+      minWidth: 400,
+      flex: 1,
+      renderCell: (params) => (
+        <div>{params.value.map((element, key) => element.Username + ", ")}</div>
+      ),
+    },
+    {
       field: "date",
       headerName: "Date",
       minWidth: 200,
@@ -146,22 +155,6 @@ function Meeting({ match }) {
         });
         return valueFormatted;
       },
-    },
-
-    {
-      field: "actions",
-      type: "actions",
-      width: 20,
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<Visibility />}
-          onClick={async () => {
-            console.log("aa");
-          }}
-          label={"Marquer comme lu"}
-          showInMenu
-        />,
-      ],
     },
   ];
 

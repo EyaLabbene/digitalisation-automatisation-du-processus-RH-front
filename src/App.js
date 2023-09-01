@@ -15,11 +15,20 @@ import Absence from "./components/absence/absence";
 import Poste from "./components/poste/poste";
 import QuestionResponse from "./components/questionResponse/questionResponse";
 import Navigation from "./components/navigation/navigation";
+import HomeScreenCandidate from "./components/navigationCandidate/navigationCandidate";
+
+import PosteCandidate from "./components/postecandidate/posteCandidate";
 import SignUp from "./components/Sign up/signup";
 import CreateQuestionResponse from "./components/technicalTest/createQuestionPesponse";
 import ListesQuesRep from "./components/technicalTest/listesQuestRep";
 import CreatetechnicalTest from "./components/technicalTest/createTechnicalTest";
 import CreateProject from "./components/project/addproject";
+import CreateInterview from "./components/interview/addInterview";
+import CreateMeeting from "./components/meeting/addMeeting";
+
+import CreatePoste from "./components/poste/addPoste";
+import InterviewCandidate from "./components/interviewCandidate/interviewCandidate";
+
 function App() {
   return (
     <Router>
@@ -32,6 +41,7 @@ function App() {
           <Route path="/dashboard/user" element={<User />} />
           <Route path="/dashboard/userDetail" element={<UserDetails />} />
           <Route path="/dashboard/meeting" element={<Meeting />} />
+
           <Route path="/dashboard/project" element={<Project />} />
           <Route path="/dashboard/techtest" element={<TechnicalTest />} />
           <Route path="/dashboard/leave" element={<Leave />} />
@@ -41,6 +51,10 @@ function App() {
           <Route path="/dashboard/poste" element={<Poste />} />
           <Route path="/dashboard/listequesrep" element={<ListesQuesRep />} />
           <Route path="/dashboard/addproject" element={<CreateProject />} />
+          <Route path="/dashboard/addInterview" element={<CreateInterview />} />
+          <Route path="/dashboard/addMeeting" element={<CreateMeeting />} />
+
+          <Route path="/dashboard/addPoste" element={<CreatePoste />} />
 
           <Route
             path="/dashboard/createQuesRep"
@@ -53,6 +67,16 @@ function App() {
           <Route
             path="/dashboard/createTechnicalTest"
             element={<CreatetechnicalTest />}
+          />
+        </Route>
+        <Route path="/dashboardCandidate" element={<HomeScreenCandidate />}>
+          <Route
+            path="/dashboardCandidate/posteCandidate"
+            element={<PosteCandidate />}
+          />
+          <Route
+            path="/dashboardCandidate/EntretienCandidate"
+            element={<InterviewCandidate />}
           />
         </Route>
       </Routes>

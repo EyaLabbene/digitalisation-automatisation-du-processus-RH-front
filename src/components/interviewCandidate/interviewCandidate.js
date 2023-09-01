@@ -10,9 +10,9 @@ import {
 } from "@mui/x-data-grid";
 import { Visibility } from "@mui/icons-material";
 
-import "./interview.scss";
+import "./interviewCandidate.scss";
 
-function Interview({ match }) {
+function InterviewCandidate({ match }) {
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [dataRows, setDataRows] = useState([]);
@@ -102,7 +102,7 @@ function Interview({ match }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await api.get(`/interview`);
+      const response = await api.get(`/interview/mine`);
       setDataRows(response.data);
     };
 
@@ -113,15 +113,6 @@ function Interview({ match }) {
     {
       field: "interviewer",
       headerName: "Recruteur",
-      minWidth: 400,
-      flex: 1,
-      valueFormatter: (params) => {
-        return params.value?.Username;
-      },
-    },
-    {
-      field: "interviewee",
-      headerName: "Candidat",
       minWidth: 400,
       flex: 1,
       valueFormatter: (params) => {
@@ -157,8 +148,12 @@ function Interview({ match }) {
   ];
 
   return (
-    <div className="interviewsScreen">
+    <div className="interviewsCandidateScreen">
+      {dataRows.map((interview) => (
+        <div key={interview._id}>{/* Render interview details */}</div>
+      ))}
       <header>Entretiens</header>
+
       <main>
         <Card sx={{ flex: 1 }}>
           <DataGrid
@@ -183,4 +178,4 @@ function Interview({ match }) {
   );
 }
 
-export default Interview;
+export default InterviewCandidate;

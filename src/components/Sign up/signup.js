@@ -39,7 +39,7 @@ export default function SignUp() {
         last_name,
         email,
         password,
-        role,
+        role: "candidate",
         address,
         date_of_birth,
         Username,

@@ -34,7 +34,7 @@ const MenuProps = {
   },
 };
 
-export default function CreateProject() {
+export default function CreateMeeting() {
   useEffect(() => {
     getData();
   }, []);
@@ -46,7 +46,6 @@ export default function CreateProject() {
   const theme = useTheme();
   const [employee, setEmployee] = useState([]);
   const [listEmpolyee, setListEmployee] = useState([]);
-  const navigate = useNavigate();
   useEffect(() => {
     console.log(employee);
   }, [employee]);
@@ -59,13 +58,28 @@ export default function CreateProject() {
       typeof value === "string" ? value.split(",") : value
     );
   };
-  const handleChangeTitle = (event) => {
+  const handleChangeDate = (event) => {
     const {
       target: { value },
     } = event;
-    setTitle(value);
+    setdate(value);
   };
-  const [title, setTitle] = useState("");
+  const handleChangeStart = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setStart(value);
+  };
+  const handleChangeEnd = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setEnd(value);
+  };
+  const [date, setdate] = useState("");
+  const [start_time, setStart] = useState("");
+  const [end_time, setEnd] = useState("");
+  const navigate = useNavigate();
   const fetchEmployee = async () => {
     let data = null; // Initialisation de la variable data
 
@@ -84,11 +98,14 @@ export default function CreateProject() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post("/project", {
+      const response = await api.post("/meeting", {
         employee,
-        title,
+        date,
+        start_time,
+        end_time,
       });
-      navigate("/dashboard/project");
+
+      navigate("/dashboard/meeting");
     } catch (error) {
       console.error(error);
     }
@@ -111,23 +128,53 @@ export default function CreateProject() {
           </Typography>
           <form onSubmit={handleSubmit}>
             <Grid item xs={12}>
+              <div>Le</div>
               <TextField
-                autoComplete="title"
-                name="title"
+                autoComplete="date"
+                name="date"
                 required
                 fullWidth
-                id="title"
-                label="Tittre"
-                value={title}
-                onChange={handleChangeTitle}
+                type="date"
+                id="date"
+                value={date}
+                onChange={handleChangeDate}
               />
             </Grid>
+            <Grid item xs={12}>
+              <div>De</div>
+              <TextField
+                autoComplete="start_time"
+                name="start_time"
+                required
+                fullWidth
+                type="datetime-local"
+                id="start_time"
+                value={start_time}
+                onChange={handleChangeStart}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <div>jusqu'à</div>
+              <TextField
+                autoComplete="end_time"
+                name="end_time"
+                required
+                fullWidth
+                type="datetime-local"
+                id="end_time"
+                value={end_time}
+                onChange={handleChangeEnd}
+              />
+            </Grid>
+
             <div>
               <FormControl sx={{ m: 1, width: 300 }}>
                 <InputLabel id="multiselectEmployeeLabel">Employés</InputLabel>
                 <Select
                   labelId="multiselectEmployeeLabel"
                   id="multiselectEmployee"
+                  multiple
+                  fullWidth
                   value={employee}
                   onChange={handleChange}
                   input={<OutlinedInput label="Name" />}

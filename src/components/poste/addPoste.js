@@ -21,6 +21,7 @@ import Select from "@mui/material/Select";
 import { useTheme } from "@mui/material/styles";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import FormControl from "@mui/material/FormControl";
+import { Input } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const ITEM_HEIGHT = 48;
@@ -34,63 +35,38 @@ const MenuProps = {
   },
 };
 
-export default function CreateProject() {
-  useEffect(() => {
-    getData();
-  }, []);
-  async function getData() {
-    const response = await api.get(`/user`);
-    console.log(response.data);
-    setListEmployee(response.data);
-  }
+export default function CreatePoste() {
   const theme = useTheme();
-  const [employee, setEmployee] = useState([]);
-  const [listEmpolyee, setListEmployee] = useState([]);
+  const [title, setTitle] = useState("");
+  const [image, setImage] = useState(null);
   const navigate = useNavigate();
-  useEffect(() => {
-    console.log(employee);
-  }, [employee]);
+
   const handleChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setEmployee(
-      // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
-    );
-  };
-  const handleChangeTitle = (event) => {
     const {
       target: { value },
     } = event;
     setTitle(value);
   };
-  const [title, setTitle] = useState("");
-  const fetchEmployee = async () => {
-    let data = null; // Initialisation de la variable data
-
-    try {
-      const response = await fetch("/user");
-      data = await response.json();
-      console.log(data); // Vérifiez la structure de la réponse dans la console
-    } catch (error) {
-      console.error("Erreur lors de la récupération des employés :", error);
-    }
-
-    setEmployee(data);
-    fetchEmployee();
+  const handleChangeImage = (event) => {
+    setImage(event.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await api.post("/project", {
-        employee,
-        title,
-      });
-      navigate("/dashboard/project");
-    } catch (error) {
-      console.error(error);
+    if (image && title) {
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("image", image, image.name);
+      try {
+        const response = await api.post("/poste", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        if (response.status == 201) {
+          navigate("/dashboard/poste");
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -119,28 +95,20 @@ export default function CreateProject() {
                 id="title"
                 label="Tittre"
                 value={title}
-                onChange={handleChangeTitle}
+                onChange={handleChange}
               />
             </Grid>
-            <div>
-              <FormControl sx={{ m: 1, width: 300 }}>
-                <InputLabel id="multiselectEmployeeLabel">Employés</InputLabel>
-                <Select
-                  labelId="multiselectEmployeeLabel"
-                  id="multiselectEmployee"
-                  value={employee}
-                  onChange={handleChange}
-                  input={<OutlinedInput label="Name" />}
-                  MenuProps={MenuProps}
-                >
-                  {listEmpolyee.map((user) => (
-                    <MenuItem key={user._id} value={user._id}>
-                      {user.first_name + " " + user.last_name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </div>
+            <Grid item xs={12}>
+              <Input
+                required
+                type="file"
+                fullWidth
+                id="image"
+                label="image"
+                onChange={handleChangeImage}
+              />
+            </Grid>
+
             <Button
               type="submit"
               fullWidth

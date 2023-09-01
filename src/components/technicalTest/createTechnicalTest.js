@@ -21,6 +21,7 @@ import Select from "@mui/material/Select";
 import { useTheme } from "@mui/material/styles";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import FormControl from "@mui/material/FormControl";
+import { useNavigate } from "react-router-dom";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -45,6 +46,8 @@ export default function CreatetechnicalTest() {
   const theme = useTheme();
   const [questions, setQuestions] = useState([]);
   const [listQuestions, setListQuestions] = useState([]);
+  const navigate = useNavigate();
+
   useEffect(() => {
     console.log(questions);
   }, [questions]);
@@ -56,6 +59,12 @@ export default function CreatetechnicalTest() {
       // On autofill we get a stringified value.
       typeof value === "string" ? value.split(",") : value
     );
+  };
+  const handleChangeTitle = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setTitle(value);
   };
   const [title, setTitle] = useState("");
   const fetchQuestions = async () => {
@@ -80,10 +89,11 @@ export default function CreatetechnicalTest() {
         questions,
         title,
       });
-
+      navigate("/dashboard/techtest");
       console.log(response.data);
 
       setTitle("");
+      console.log("succes");
 
       // window.localStorage.setItem("token", "bearer " + response.data.token);
 
@@ -118,7 +128,7 @@ export default function CreatetechnicalTest() {
                 id="title"
                 label="Tittre"
                 value={title}
-                onChange={handleChange}
+                onChange={handleChangeTitle}
               />
             </Grid>
             <div>

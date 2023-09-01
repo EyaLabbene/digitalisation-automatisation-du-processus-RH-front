@@ -10,9 +10,9 @@ import {
 } from "@mui/x-data-grid";
 import { Visibility } from "@mui/icons-material";
 
-import "./interview.scss";
+import "./posteCandidate.scss";
 
-function Interview({ match }) {
+function PosteCandidate({ match }) {
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [dataRows, setDataRows] = useState([]);
@@ -102,7 +102,7 @@ function Interview({ match }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await api.get(`/interview`);
+      const response = await api.get(`/poste`);
       setDataRows(response.data);
     };
 
@@ -111,54 +111,47 @@ function Interview({ match }) {
 
   const dataColumns = [
     {
-      field: "interviewer",
-      headerName: "Recruteur",
+      field: "title",
+      headerName: "Tittre",
       minWidth: 400,
       flex: 1,
-      valueFormatter: (params) => {
-        return params.value?.Username;
-      },
     },
     {
-      field: "interviewee",
-      headerName: "Candidat",
+      field: "image",
+      headerName: "image",
       minWidth: 400,
       flex: 1,
-      valueFormatter: (params) => {
-        return params.value?.Username;
-      },
+      renderCell: (params) =>
+        params.value ? (
+          <img
+            alt="image du poste"
+            src={"data:image/jpeg;base64," + params.value}
+          />
+        ) : (
+          <></>
+        ),
     },
 
     {
-      field: "start_date",
-      headerName: "Commence à :",
-      minWidth: 200,
-      valueFormatter: (params) => {
-        const valueFormatted = new Date(params.value).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-
-        return valueFormatted;
-      },
-    },
-    {
-      field: "end_date",
-      headerName: "se termine à :",
-      minWidth: 200,
-      valueFormatter: (params) => {
-        const valueFormatted = new Date(params.value).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-        return valueFormatted;
-      },
+      field: "actions",
+      type: "actions",
+      width: 20,
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<Visibility />}
+          onClick={async () => {
+            console.log("aa");
+          }}
+          label={"Marquer comme lu"}
+          showInMenu
+        />,
+      ],
     },
   ];
 
   return (
-    <div className="interviewsScreen">
-      <header>Entretiens</header>
+    <div className="postesCandidateScreen ">
+      <header>Postes</header>
       <main>
         <Card sx={{ flex: 1 }}>
           <DataGrid
@@ -183,4 +176,4 @@ function Interview({ match }) {
   );
 }
 
-export default Interview;
+export default PosteCandidate;

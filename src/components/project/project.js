@@ -12,7 +12,7 @@ import { Visibility } from "@mui/icons-material";
 
 import "./project.scss";
 
-function Project({ match }) {
+function Project() {
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [dataRows, setDataRows] = useState([]);
@@ -98,8 +98,6 @@ function Project({ match }) {
     );
   }
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     const fetchData = async () => {
       const response = await api.get(`/project`);
@@ -107,7 +105,7 @@ function Project({ match }) {
     };
 
     fetchData();
-  }, [match]);
+  }, []);
 
   const dataColumns = [
     {
@@ -124,22 +122,6 @@ function Project({ match }) {
       headerName: "Tittre",
       minWidth: 400,
       flex: 1,
-    },
-
-    {
-      field: "actions",
-      type: "actions",
-      width: 20,
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<Visibility />}
-          onClick={async () => {
-            console.log("aa");
-          }}
-          label={"Marquer comme lu"}
-          showInMenu
-        />,
-      ],
     },
   ];
 
