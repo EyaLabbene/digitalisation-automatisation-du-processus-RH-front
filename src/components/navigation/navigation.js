@@ -401,6 +401,15 @@ export default function HomeScreen() {
             </Collapse>
           </List>
         </nav>
+        <div
+          className="logout"
+          onClick={() => {
+            window.localStorage.clear();
+            navigate("/");
+          }}
+        >
+          Déconnexion
+        </div>
       </section>
       <section className="right">
         <Outlet />

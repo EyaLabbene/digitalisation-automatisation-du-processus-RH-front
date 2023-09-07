@@ -65,4 +65,9 @@
     display: flex;
     justify-content: flex-end;
   }
+  .action-buttons {
+    display: flex;
+    align-items: center; /* Vertically center-align buttons */
+    gap: 5px; /* Adjust the gap between buttons as needed */
+  }
 }

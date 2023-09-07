@@ -38,6 +38,7 @@ function Login() {
     api
       .post("/authentification", { email, password })
       .then((response) => {
+        window.localStorage.setItem("token", response.data.token);
         setAuthToken(response.data.token);
         if (response.data.role === "admin") {
           navigate("/dashboard/user");

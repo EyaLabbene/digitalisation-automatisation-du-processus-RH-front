@@ -114,6 +114,13 @@
     overflow: hidden;
     position: relative;
   }
+  .logout {
+    width: 100%;
+    text-align: center;
+    padding: 5px 0;
+    font-weight: bold;
+    cursor: pointer;
+  }
 }
 .MuiTypography-root {
   font-family: "Poppins", sans-serif !important;

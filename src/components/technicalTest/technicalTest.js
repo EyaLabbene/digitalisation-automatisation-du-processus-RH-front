@@ -1,8 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../api";
-import { Card, Box, LinearProgress, styled } from "@mui/material";
-
+import { Card, Box, LinearProgress, styled, Button } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
 import {
   DataGrid,
   GridToolbar,
@@ -17,6 +30,31 @@ function TechnicalTest({ match }) {
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [dataRows, setDataRows] = useState([]);
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedTestTech, setSelectedTestTech] = useState(null);
+  const [existingQuestions, setExistingQuestions] = useState([]);
+  const [formData, setFormData] = useState({
+    title: "",
+    questions: [], // Array of selected employee IDs
+  });
+
+  //? MERGED FETCH USER AND MEETING DATA
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const questionsResponse = await api.get("/questionResponse");
+        setExistingQuestions(questionsResponse.data);
+
+        const techTestsResponse = await api.get("/techTest");
+        console.log(techTestsResponse.data);
+        setDataRows(techTestsResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, [match]);
   const StyledGridOverlay = styled(GridOverlay)(({ theme }) => ({
     flexDirection: "column",
     "& .ant-empty-img-1": {
@@ -36,6 +74,88 @@ function TechnicalTest({ match }) {
       fill: theme.palette.mode === "light" ? "#f5f5f5" : "#fff",
     },
   }));
+  const handleEditTestTech = (techTest) => {
+    setSelectedTestTech(techTest);
+    setFormData({
+      title: new String(techTest.title),
+      questions: techTest.questions.map((ques) => ques._id),
+    });
+    setUpdateModalOpen(true);
+  };
+
+  const handleDeleteTestTech = (techTest) => {
+    setSelectedTestTech(techTest);
+    setDeleteModalOpen(true);
+  };
+
+  const handleCloseUpdateModal = () => {
+    setUpdateModalOpen(false);
+    setSelectedTestTech(null);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setSelectedTestTech(null);
+  };
+
+  const handleUpdateTestTech = async (e) => {
+    try {
+      e.preventDefault();
+      // Parse start_time and end_time into date objects
+      const title = new String(formData.title);
+
+      if (selectedTestTech) {
+        const response = await api.put(`/techTest/${selectedTestTech._id}`, {
+          ...formData,
+
+          title: title,
+        });
+
+        if (response.status === 200) {
+          setDataRows((prevState) => {
+            console.log(response.data);
+            const updatedRows = prevState.map((row) =>
+              row._id === selectedTestTech._id ? response.data : row
+            );
+            return updatedRows;
+          });
+          console.log("technical test updated successfully:", response.data);
+        } else {
+          console.error("Error updating technical test:", response.data);
+        }
+      }
+    } catch (error) {
+      console.error("An error occurred while updating technical test:", error);
+    }
+    handleCloseUpdateModal();
+  };
+
+  const handleDeleteTestTechConfirmed = async () => {
+    try {
+      if (selectedTestTech) {
+        const response = await api.delete(`/techTest/${selectedTestTech._id}`);
+
+        if (response.status === 200) {
+          setDataRows((prevState) =>
+            prevState.filter((row) => row._id !== selectedTestTech._id)
+          );
+          console.log("Technical test deleted successfully:", response.data);
+        } else {
+          console.error("Error deleting technical test:", response.data);
+        }
+      }
+    } catch (error) {
+      console.error("An error occurred while deleting techniczl test:", error);
+    }
+    handleCloseDeleteModal();
+  };
+
+  const handleFieldChange = (fieldName, value) => {
+    setFormData({
+      ...formData,
+      [fieldName]: value,
+    });
+  };
 
   function CustomNoRowsOverlay(text) {
     return (
@@ -108,6 +228,42 @@ function TechnicalTest({ match }) {
 
     fetchData();
   }, [match]);
+  //? UPDATE FORM
+  const populateForm = () => {
+    if (selectedTestTech) {
+      return (
+        <form>
+          <TextField
+            label="Tittre"
+            variant="outlined"
+            margin="normal"
+            value={formData.title}
+            onChange={(e) => handleFieldChange("title", e.target.value)}
+            fullWidth
+            required
+          />
+
+          {/* Employee Select Field */}
+          <FormControl fullWidth>
+            <InputLabel>question(s)</InputLabel>
+            <Select
+              multiple
+              value={formData.questions}
+              onChange={(e) => handleFieldChange("questions", e.target.value)}
+              fullWidth
+            >
+              {/* Map through your existing users and create options */}
+              {existingQuestions.map((questions) => (
+                <MenuItem key={questions._id} value={questions._id}>
+                  {questions.question}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </form>
+      );
+    }
+  };
 
   const dataColumns = [
     {
@@ -126,6 +282,30 @@ function TechnicalTest({ match }) {
       // },
       renderCell: (params) => (
         <div>{params.value.map((element, key) => element.question + ", ")}</div>
+      ),
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      sortable: false,
+      minWidth: 200,
+      renderCell: (params) => (
+        <div className="action-buttons">
+          <Button
+            color="primary"
+            startIcon={<EditIcon />}
+            onClick={() => handleEditTestTech(params.row)}
+          >
+            Edit
+          </Button>
+          <Button
+            color="secondary"
+            startIcon={<DeleteIcon />}
+            onClick={() => handleDeleteTestTech(params.row)}
+          >
+            Delete
+          </Button>
+        </div>
       ),
     },
   ];
@@ -150,9 +330,47 @@ function TechnicalTest({ match }) {
               NoResultsOverlay: () => CustomNoRowsOverlay("Pas de Résultats"),
             }}
             disableSelectionOnClick
+            onSelectionModelChange={(selection) => {
+              if (selection.selectionModel.length > 0) {
+                const selectedRowIndex = selection.selectionModel[0];
+                const techTest = dataRows[selectedRowIndex];
+                setSelectedTestTech(techTest);
+              } else {
+                setSelectedTestTech(null);
+              }
+            }}
           />
         </Card>
       </main>
+      {/* Update  Modal */}
+      <Dialog open={updateModalOpen} onClose={handleCloseUpdateModal}>
+        <DialogTitle>Modifier le test technique</DialogTitle>
+        <DialogContent>{populateForm()}</DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseUpdateModal} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={handleUpdateTestTech} color="primary">
+            Valider
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* Delete Modal   */}
+      <Dialog open={deleteModalOpen} onClose={handleCloseDeleteModal}>
+        <DialogTitle>Effacer un test </DialogTitle>
+        <DialogContent>
+          <DialogContentText>Voulez Vous Supprimer ce test ?</DialogContentText>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={handleCloseDeleteModal} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={handleDeleteTestTechConfirmed} color="secondary">
+            Supprimer
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

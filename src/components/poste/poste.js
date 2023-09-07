@@ -1,7 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../api";
-import { Card, Box, LinearProgress, styled } from "@mui/material";
+
+import {
+  Card,
+  Box,
+  LinearProgress,
+  styled,
+  Button,
+  Input,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
 import {
   DataGrid,
   GridToolbar,
@@ -16,6 +34,10 @@ function Poste({ match }) {
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [dataRows, setDataRows] = useState([]);
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedPoste, setSelectedPoste] = useState(null);
+  const [newImage, setNewImage] = useState(null);
   const StyledGridOverlay = styled(GridOverlay)(({ theme }) => ({
     flexDirection: "column",
     "& .ant-empty-img-1": {
@@ -35,6 +57,91 @@ function Poste({ match }) {
       fill: theme.palette.mode === "light" ? "#f5f5f5" : "#fff",
     },
   }));
+  const handleEditPoste = (poste) => {
+    setSelectedPoste(poste);
+    setUpdateModalOpen(true);
+  };
+
+  const handleDeletePoste = (poste) => {
+    setSelectedPoste(poste);
+    setDeleteModalOpen(true);
+  };
+
+  const handleCloseUpdateModal = () => {
+    setUpdateModalOpen(false);
+    setSelectedPoste(null);
+    setNewImage(null);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setSelectedPoste(null);
+  };
+
+  const handleUpdatePoste = async () => {
+    try {
+      if (selectedPoste) {
+        const formData = new FormData();
+        formData.append("title", selectedPoste.title);
+        if (newImage !== null) {
+          formData.append("image", newImage, newImage.name);
+        }
+
+        const response = await api.put(
+          `/poste/${selectedPoste._id}`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
+
+        if (response.status === 200) {
+          setDataRows((prevState) => {
+            const updatedRows = prevState.map((row) =>
+              row._id === selectedPoste._id ? response.data : row
+            );
+            return updatedRows;
+          });
+          console.log("Poste updated successfully:", response.data);
+        } else {
+          console.error("Error updating poste:", response.data);
+        }
+      }
+    } catch (error) {
+      console.error("An error occurred while updating poste:", error);
+    }
+    handleCloseUpdateModal();
+  };
+
+  const handleDeletePosteConfirmed = async () => {
+    try {
+      if (selectedPoste) {
+        const response = await api.delete(`/poste/${selectedPoste._id}`);
+
+        if (response.status === 200) {
+          setDataRows((prevState) =>
+            prevState.filter((row) => row._id !== selectedPoste._id)
+          );
+          console.log("Poste deleted successfully:", response.data);
+        } else {
+          console.error("Error deleting poste:", response.data);
+        }
+      }
+    } catch (error) {
+      console.error("An error occurred while deleting poste:", error);
+    }
+    handleCloseDeleteModal();
+  };
+
+  const handleFieldChange = (fieldName, value) => {
+    setSelectedPoste({
+      ...selectedPoste,
+      [fieldName]: value,
+    });
+  };
+  const handleChangeImage = (event) => {
+    setNewImage(event.target.files[0]);
+  };
 
   function CustomNoRowsOverlay(text) {
     return (
@@ -103,6 +210,7 @@ function Poste({ match }) {
   useEffect(() => {
     const fetchData = async () => {
       const response = await api.get(`/poste`);
+      console.log(response.data);
       setDataRows(response.data);
     };
 
@@ -134,19 +242,29 @@ function Poste({ match }) {
 
     {
       field: "actions",
-      type: "actions",
-      width: 20,
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<Visibility />}
-          onClick={async () => {
-            console.log("aa");
-          }}
-          label={"Marquer comme lu"}
-          showInMenu
-        />,
-      ],
+      headerName: "Actions",
+      sortable: false,
+      minWidth: 200,
+      renderCell: (params) => (
+        <div className="action-buttons">
+          <Button
+            color="primary"
+            startIcon={<EditIcon />}
+            onClick={() => handleEditPoste(params.row)}
+          >
+            Edit
+          </Button>
+          <Button
+            color="secondary"
+            startIcon={<DeleteIcon />}
+            onClick={() => handleDeletePoste(params.row)}
+          >
+            Delete
+          </Button>
+        </div>
+      ),
     },
+    ,
   ];
 
   return (
@@ -165,13 +283,91 @@ function Poste({ match }) {
             components={{
               Toolbar: GridToolbar,
               LoadingOverlay: CustomLoadingOverlay,
-              NoRowsOverlay: () => CustomNoRowsOverlay("Pas de Réclamations"),
+              NoRowsOverlay: () => CustomNoRowsOverlay("Pas de postes"),
               NoResultsOverlay: () => CustomNoRowsOverlay("Pas de Résultats"),
             }}
             disableSelectionOnClick
+            onSelectionModelChange={(selection) => {
+              if (selection.selectionModel.length > 0) {
+                const selectedRowIndex = selection.selectionModel[0];
+                const poste = dataRows[selectedRowIndex];
+                setSelectedPoste(poste);
+              } else {
+                setSelectedPoste(null);
+              }
+            }}
           />
         </Card>
       </main>
+      {/* Update  Modal */}
+      <Dialog open={updateModalOpen} onClose={handleCloseUpdateModal}>
+        <DialogTitle>Modifier le Poste</DialogTitle>
+        <DialogContent>
+          {selectedPoste && (
+            <form>
+              <TextField
+                fullWidth
+                label="Tittre"
+                variant="outlined"
+                margin="normal"
+                value={selectedPoste.title}
+                onChange={(e) => handleFieldChange("title", e.target.value)}
+              />
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <img
+                  alt="image du poste"
+                  width={400}
+                  src={
+                    newImage
+                      ? URL.createObjectURL(newImage)
+                      : "data:image/jpeg;base64," + selectedPoste.image
+                  }
+                />
+              </div>
+              <Input
+                required
+                type="file"
+                fullWidth
+                id="image"
+                label="image"
+                onChange={handleChangeImage}
+              />
+            </form>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseUpdateModal} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={handleUpdatePoste} color="primary">
+            Valider
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* Delete Modal   */}
+      <Dialog open={deleteModalOpen} onClose={handleCloseDeleteModal}>
+        <DialogTitle>Delete Poste</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Voulez Vous Supprimer le poste : ?
+          </DialogContentText>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={handleCloseDeleteModal} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={handleDeletePosteConfirmed} color="secondary">
+            Supprimer
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

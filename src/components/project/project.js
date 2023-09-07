@@ -1,7 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../api";
-import { Card, Box, LinearProgress, styled } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Card, Box, LinearProgress, styled, Button } from "@mui/material";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
 import {
   DataGrid,
   GridToolbar,
@@ -12,10 +26,26 @@ import { Visibility } from "@mui/icons-material";
 
 import "./project.scss";
 
-function Project() {
+function Project({ match }) {
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [dataRows, setDataRows] = useState([]);
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [existingUsers, setExistingUsers] = useState([]);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await api.get("/user");
+        setExistingUsers(response.data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, [match]);
   const StyledGridOverlay = styled(GridOverlay)(({ theme }) => ({
     flexDirection: "column",
     "& .ant-empty-img-1": {
@@ -35,6 +65,78 @@ function Project() {
       fill: theme.palette.mode === "light" ? "#f5f5f5" : "#fff",
     },
   }));
+  const handleEditProject = (project) => {
+    setSelectedProject(project);
+    setUpdateModalOpen(true);
+  };
+
+  const handleDeleteProject = (project) => {
+    setSelectedProject(project);
+    setDeleteModalOpen(true);
+  };
+
+  const handleCloseUpdateModal = () => {
+    setUpdateModalOpen(false);
+    setSelectedProject(null);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setSelectedProject(null);
+  };
+
+  const handleUpdateProject = async () => {
+    try {
+      if (selectedProject) {
+        const response = await api.put(
+          `/project/${selectedProject._id}`,
+          selectedProject
+        );
+
+        if (response.status === 200) {
+          setDataRows((prevState) => {
+            const updatedRows = prevState.map((row) =>
+              row._id === selectedProject._id ? response.data : row
+            );
+            return updatedRows;
+          });
+          console.log("Project updated successfully:", response.data);
+        } else {
+          console.error("Error updating project:", response.data);
+        }
+      }
+    } catch (error) {
+      console.error("An error occurred while updating project:", error);
+    }
+    handleCloseUpdateModal();
+  };
+
+  const handleDeleteProjectConfirmed = async () => {
+    try {
+      if (selectedProject) {
+        const response = await api.delete(`/project/${selectedProject._id}`);
+
+        if (response.status === 200) {
+          setDataRows((prevState) =>
+            prevState.filter((row) => row._id !== selectedProject._id)
+          );
+          console.log("Project deleted successfully:", response.data);
+        } else {
+          console.error("Error deleting project:", response.data);
+        }
+      }
+    } catch (error) {
+      console.error("An error occurred while deleting project:", error);
+    }
+    handleCloseDeleteModal();
+  };
+
+  const handleFieldChange = (fieldName, value) => {
+    setSelectedProject({
+      ...selectedProject,
+      [fieldName]: value,
+    });
+  };
 
   function CustomNoRowsOverlay(text) {
     return (
@@ -123,6 +225,30 @@ function Project() {
       minWidth: 400,
       flex: 1,
     },
+    {
+      field: "actions",
+      headerName: "Actions",
+      sortable: false,
+      minWidth: 200,
+      renderCell: (params) => (
+        <div className="action-buttons">
+          <Button
+            color="primary"
+            startIcon={<EditIcon />}
+            onClick={() => handleEditProject(params.row)}
+          >
+            Edit
+          </Button>
+          <Button
+            color="secondary"
+            startIcon={<DeleteIcon />}
+            onClick={() => handleDeleteProject(params.row)}
+          >
+            Delete
+          </Button>
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -145,9 +271,79 @@ function Project() {
               NoResultsOverlay: () => CustomNoRowsOverlay("Pas de Résultats"),
             }}
             disableSelectionOnClick
+            onSelectionModelChange={(selection) => {
+              if (selection.selectionModel.length > 0) {
+                const selectedRowIndex = selection.selectionModel[0];
+                const project = dataRows[selectedRowIndex];
+                setSelectedProject(project);
+              } else {
+                setSelectedProject(null);
+              }
+            }}
           />
         </Card>
       </main>
+      {/* Update  Modal */}
+      <Dialog open={updateModalOpen} onClose={handleCloseUpdateModal}>
+        <DialogTitle>Modifier le Projet</DialogTitle>
+        <DialogContent>
+          {selectedProject && (
+            <form>
+              <FormControl fullWidth>
+                <InputLabel>Employé</InputLabel>
+                <Select
+                  value={selectedProject.employee}
+                  onChange={(e) =>
+                    handleFieldChange("employee", e.target.value)
+                  }
+                  fullWidth
+                >
+                  {/* Map through your existing users and create options */}
+                  {existingUsers.map((employee) => (
+                    <MenuItem key={employee._id} value={employee._id}>
+                      {employee.Username}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <TextField
+                fullWidth
+                label="Tittre"
+                variant="outlined"
+                margin="normal"
+                value={selectedProject.title}
+                onChange={(e) => handleFieldChange("title", e.target.value)}
+              />
+            </form>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseUpdateModal} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={handleUpdateProject} color="primary">
+            Valider
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* Delete Modal   */}
+      <Dialog open={deleteModalOpen} onClose={handleCloseDeleteModal}>
+        <DialogTitle>Delete Project</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Voulez Vous Supprimer ce projet : ?
+          </DialogContentText>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={handleCloseDeleteModal} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={handleDeleteProjectConfirmed} color="secondary">
+            Supprimer
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

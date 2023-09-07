@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../api";
-import { Card, Box, LinearProgress, styled } from "@mui/material";
+import { Card, Box, LinearProgress, styled, Button } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
 import {
   DataGrid,
   GridToolbar,
@@ -16,6 +26,9 @@ function ListesQuesRep({ match }) {
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [dataRows, setDataRows] = useState([]);
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedQuesRep, setSelectedQuesRep] = useState(null);
   const StyledGridOverlay = styled(GridOverlay)(({ theme }) => ({
     flexDirection: "column",
     "& .ant-empty-img-1": {
@@ -35,6 +48,86 @@ function ListesQuesRep({ match }) {
       fill: theme.palette.mode === "light" ? "#f5f5f5" : "#fff",
     },
   }));
+  const handleEditQuesRep = (questionResponse) => {
+    setSelectedQuesRep(questionResponse);
+    setUpdateModalOpen(true);
+  };
+
+  const handleDeleteQuesRep = (questionResponse) => {
+    setSelectedQuesRep(questionResponse);
+    setDeleteModalOpen(true);
+  };
+
+  const handleCloseUpdateModal = () => {
+    setUpdateModalOpen(false);
+    setSelectedQuesRep(null);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setSelectedQuesRep(null);
+  };
+
+  const handleUpdateQuesRep = async () => {
+    try {
+      if (selectedQuesRep) {
+        const response = await api.put(
+          `/questionResponse/${selectedQuesRep._id}`,
+          selectedQuesRep
+        );
+
+        if (response.status === 200) {
+          setDataRows((prevState) => {
+            const updatedRows = prevState.map((row) =>
+              row._id === selectedQuesRep._id ? response.data : row
+            );
+            return updatedRows;
+          });
+          console.log("QuestionResponse updated successfully:", response.data);
+        } else {
+          console.error("Error updating questionResponse:", response.data);
+        }
+      }
+    } catch (error) {
+      console.error(
+        "An error occurred while updating questionResponse:",
+        error
+      );
+    }
+    handleCloseUpdateModal();
+  };
+
+  const handleDeleteQuesRepConfirmed = async () => {
+    try {
+      if (selectedQuesRep) {
+        const response = await api.delete(
+          `/questionResponse/${selectedQuesRep._id}`
+        );
+
+        if (response.status === 200) {
+          setDataRows((prevState) =>
+            prevState.filter((row) => row._id !== selectedQuesRep._id)
+          );
+          console.log("QuestionResponse deleted successfully:", response.data);
+        } else {
+          console.error("Error deleting questionResponse:", response.data);
+        }
+      }
+    } catch (error) {
+      console.error(
+        "An error occurred while deleting questionResponse:",
+        error
+      );
+    }
+    handleCloseDeleteModal();
+  };
+
+  const handleFieldChange = (fieldName, value) => {
+    setSelectedQuesRep({
+      ...selectedQuesRep,
+      [fieldName]: value,
+    });
+  };
 
   function CustomNoRowsOverlay(text) {
     return (
@@ -142,10 +235,34 @@ function ListesQuesRep({ match }) {
       minWidth: 400,
       flex: 1,
     },
+    {
+      field: "actions",
+      headerName: "Actions",
+      sortable: false,
+      minWidth: 200,
+      renderCell: (params) => (
+        <div className="action-buttons">
+          <Button
+            color="primary"
+            startIcon={<EditIcon />}
+            onClick={() => handleEditQuesRep(params.row)}
+          >
+            Edit
+          </Button>
+          <Button
+            color="secondary"
+            startIcon={<DeleteIcon />}
+            onClick={() => handleDeleteQuesRep(params.row)}
+          >
+            Delete
+          </Button>
+        </div>
+      ),
+    },
   ];
 
   return (
-    <div className="questRepsScreen">
+    <div className="questrepsScreen">
       <header>Question et réponse</header>
       <main>
         <Card sx={{ flex: 1 }}>
@@ -164,9 +281,110 @@ function ListesQuesRep({ match }) {
               NoResultsOverlay: () => CustomNoRowsOverlay("Pas de Résultats"),
             }}
             disableSelectionOnClick
+            onSelectionModelChange={(selection) => {
+              if (selection.selectionModel.length > 0) {
+                const selectedRowIndex = selection.selectionModel[0];
+                const questionResponse = dataRows[selectedRowIndex];
+                setSelectedQuesRep(questionResponse);
+              } else {
+                setSelectedQuesRep(null);
+              }
+            }}
           />
         </Card>
       </main>
+      {/* Update  Modal */}
+      <Dialog open={updateModalOpen} onClose={handleCloseUpdateModal}>
+        <DialogTitle>Modifier questions et réponses</DialogTitle>
+        <DialogContent>
+          {selectedQuesRep && (
+            <form>
+              <TextField
+                fullWidth
+                label="Question"
+                variant="outlined"
+                margin="normal"
+                value={selectedQuesRep.question}
+                onChange={(e) => handleFieldChange("question", e.target.value)}
+              />
+              <TextField
+                fullWidth
+                label="Réponse une"
+                variant="outlined"
+                margin="normal"
+                value={selectedQuesRep.answer_one}
+                onChange={(e) =>
+                  handleFieldChange("answer_one", e.target.value)
+                }
+              />
+              <TextField
+                fullWidth
+                label="Réponse deux"
+                variant="outlined"
+                margin="normal"
+                value={selectedQuesRep.answer_two}
+                onChange={(e) =>
+                  handleFieldChange("answer_two", e.target.value)
+                }
+              />
+              <TextField
+                fullWidth
+                label="Réponse trois"
+                variant="outlined"
+                margin="normal"
+                value={selectedQuesRep.answer_three}
+                onChange={(e) =>
+                  handleFieldChange("answer_three", e.target.value)
+                }
+              />
+              <TextField
+                fullWidth
+                label="Bonne réponse"
+                variant="outlined"
+                margin="normal"
+                value={selectedQuesRep.good_answer}
+                onChange={(e) =>
+                  handleFieldChange("good_answer", e.target.value)
+                }
+              />
+              <TextField
+                fullWidth
+                label="Note"
+                variant="outlined"
+                margin="normal"
+                value={selectedQuesRep.mark}
+                onChange={(e) => handleFieldChange("mark", e.target.value)}
+              />
+            </form>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseUpdateModal} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={handleUpdateQuesRep} color="primary">
+            Valider
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* Delete Modal   */}
+      <Dialog open={deleteModalOpen} onClose={handleCloseDeleteModal}>
+        <DialogTitle>Effacer une question </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Voulez Vous Supprimer la question : ?
+          </DialogContentText>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={handleCloseDeleteModal} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={handleDeleteQuesRepConfirmed} color="secondary">
+            Supprimer
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

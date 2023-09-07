@@ -29,7 +29,13 @@ import CreateMeeting from "./components/meeting/addMeeting";
 import CreatePoste from "./components/poste/addPoste";
 import InterviewCandidate from "./components/interviewCandidate/interviewCandidate";
 
+import { setAuthToken } from "./api";
 function App() {
+  useEffect(() => {
+    if (window.localStorage.getItem("token") !== null) {
+      setAuthToken(window.localStorage.getItem("token"));
+    }
+  }, []);
   return (
     <Router>
       <Routes>

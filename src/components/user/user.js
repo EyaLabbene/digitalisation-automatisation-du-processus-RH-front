@@ -1,7 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../api";
-import { Card, Box, LinearProgress, styled } from "@mui/material";
+import { Card, Box, LinearProgress, styled, Button } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+//modal
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
+
 import {
   DataGrid,
   GridToolbar,
@@ -16,6 +28,10 @@ function User({ match }) {
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [dataRows, setDataRows] = useState([]);
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+
   const StyledGridOverlay = styled(GridOverlay)(({ theme }) => ({
     flexDirection: "column",
     "& .ant-empty-img-1": {
@@ -35,6 +51,79 @@ function User({ match }) {
       fill: theme.palette.mode === "light" ? "#f5f5f5" : "#fff",
     },
   }));
+
+  const handleEditUser = (user) => {
+    setSelectedUser(user);
+    setUpdateModalOpen(true);
+  };
+
+  const handleDeleteUser = (user) => {
+    setSelectedUser(user);
+    setDeleteModalOpen(true);
+  };
+
+  const handleCloseUpdateModal = () => {
+    setUpdateModalOpen(false);
+    setSelectedUser(null);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setSelectedUser(null);
+  };
+
+  const handleUpdateUser = async () => {
+    try {
+      if (selectedUser) {
+        const response = await api.put(
+          `/user/${selectedUser._id}`,
+          selectedUser
+        );
+
+        if (response.status === 200) {
+          setDataRows((prevState) => {
+            const updatedRows = prevState.map((row) =>
+              row._id === selectedUser._id ? response.data : row
+            );
+            return updatedRows;
+          });
+          console.log("User updated successfully:", response.data);
+        } else {
+          console.error("Error updating user:", response.data);
+        }
+      }
+    } catch (error) {
+      console.error("An error occurred while updating user:", error);
+    }
+    handleCloseUpdateModal();
+  };
+
+  const handleDeleteUserConfirmed = async () => {
+    try {
+      if (selectedUser) {
+        const response = await api.delete(`/user/${selectedUser._id}`);
+
+        if (response.status === 200) {
+          setDataRows((prevState) =>
+            prevState.filter((row) => row._id !== selectedUser._id)
+          );
+          console.log("User deleted successfully:", response.data);
+        } else {
+          console.error("Error deleting user:", response.data);
+        }
+      }
+    } catch (error) {
+      console.error("An error occurred while deleting user:", error);
+    }
+    handleCloseDeleteModal();
+  };
+
+  const handleFieldChange = (fieldName, value) => {
+    setSelectedUser({
+      ...selectedUser,
+      [fieldName]: value,
+    });
+  };
 
   function CustomNoRowsOverlay(text) {
     return (
@@ -102,7 +191,7 @@ function User({ match }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await api.get(`/user`);
+      const response = await api.get("/user");
       setDataRows(response.data);
     };
 
@@ -113,17 +202,17 @@ function User({ match }) {
     {
       field: "last_name",
       headerName: "Nom",
-      minWidth: 250,
+      minWidth: 175,
     },
     {
       field: "first_name",
       headerName: "Prénom",
-      minWidth: 250,
+      minWidth: 175,
     },
     {
       field: "role",
       headerName: "Role",
-      minWidth: 200,
+      minWidth: 175,
     },
     {
       field: "date_of_birth",
@@ -145,29 +234,38 @@ function User({ match }) {
     {
       field: "Username",
       headerName: "Nom d'utilisateur",
-      minWidth: 400,
+      minWidth: 200,
       flex: 1,
     },
     {
       field: "email",
       headerName: "E-mail",
-      minWidth: 400,
+      minWidth: 200,
       flex: 1,
     },
     {
       field: "actions",
-      type: "actions",
-      width: 20,
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<Visibility />}
-          onClick={async () => {
-            console.log("aa");
-          }}
-          label={"Marquer comme lu"}
-          showInMenu
-        />,
-      ],
+      headerName: "Actions",
+      sortable: false,
+      minWidth: 200,
+      renderCell: (params) => (
+        <div className="action-buttons">
+          <Button
+            color="primary"
+            startIcon={<EditIcon />}
+            onClick={() => handleEditUser(params.row)}
+          >
+            Edit
+          </Button>
+          <Button
+            color="secondary"
+            startIcon={<DeleteIcon />}
+            onClick={() => handleDeleteUser(params.row)}
+          >
+            Delete
+          </Button>
+        </div>
+      ),
     },
   ];
 
@@ -191,9 +289,108 @@ function User({ match }) {
               NoResultsOverlay: () => CustomNoRowsOverlay("Pas de Résultats"),
             }}
             disableSelectionOnClick
+            onSelectionModelChange={(selection) => {
+              if (selection.selectionModel.length > 0) {
+                const selectedRowIndex = selection.selectionModel[0];
+                const user = dataRows[selectedRowIndex];
+                setSelectedUser(user);
+              } else {
+                setSelectedUser(null);
+              }
+            }}
           />
         </Card>
       </main>
+
+      {/* Update  Modal */}
+      <Dialog open={updateModalOpen} onClose={handleCloseUpdateModal}>
+        <DialogTitle>Modifer User</DialogTitle>
+        <DialogContent>
+          {selectedUser && (
+            <form>
+              <TextField
+                fullWidth
+                label="First Name"
+                variant="outlined"
+                margin="normal"
+                value={selectedUser.first_name}
+                onChange={(e) =>
+                  handleFieldChange("first_name", e.target.value)
+                }
+              />
+              <TextField
+                fullWidth
+                label="Last Name"
+                variant="outlined"
+                margin="normal"
+                value={selectedUser.last_name}
+                onChange={(e) => handleFieldChange("last_name", e.target.value)}
+              />
+              <TextField
+                fullWidth
+                label="Date of Birth"
+                variant="outlined"
+                margin="normal"
+                value={selectedUser.date_of_birth}
+                onChange={(e) =>
+                  handleFieldChange("date_of_birth", e.target.value)
+                }
+              />
+              <TextField
+                fullWidth
+                label="Address"
+                variant="outlined"
+                margin="normal"
+                value={selectedUser.address}
+                onChange={(e) => handleFieldChange("address", e.target.value)}
+              />
+              <TextField
+                fullWidth
+                label="Username"
+                variant="outlined"
+                margin="normal"
+                value={selectedUser.Username}
+                onChange={(e) => handleFieldChange("Username", e.target.value)}
+              />
+              <TextField
+                fullWidth
+                label="Email"
+                variant="outlined"
+                margin="normal"
+                value={selectedUser.email}
+                onChange={(e) => handleFieldChange("email", e.target.value)}
+              />
+            </form>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseUpdateModal} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={handleUpdateUser} color="primary">
+            Valider
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Modal   */}
+      <Dialog open={deleteModalOpen} onClose={handleCloseDeleteModal}>
+        <DialogTitle>Delete User</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Voulez Vous Supprimer l'utilisateur : ?
+          </DialogContentText>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={handleCloseDeleteModal} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={handleDeleteUserConfirmed} color="secondary">
+            Supprimer
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

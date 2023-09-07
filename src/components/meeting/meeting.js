@@ -1,7 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../api";
-import { Card, Box, LinearProgress, styled } from "@mui/material";
+import {
+  Card,
+  Box,
+  LinearProgress,
+  styled,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   DataGrid,
   GridToolbar,
@@ -9,13 +27,39 @@ import {
   GridOverlay,
 } from "@mui/x-data-grid";
 import { Visibility } from "@mui/icons-material";
-
 import "./meeting.scss";
 
 function Meeting({ match }) {
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [dataRows, setDataRows] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [selectedMeeting, setSelectedMeeting] = useState(null); // State for selected meeting
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    date: "",
+    start_time: "",
+    end_time: "",
+    employee: [], // Array of selected employee IDs
+  });
+
+  //? MERGED FETCH USER AND MEETING DATA
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const usersResponse = await api.get("/user");
+        setEmployees(usersResponse.data);
+
+        const meetingsResponse = await api.get("/meeting");
+        setDataRows(meetingsResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, [match]);
+
   const StyledGridOverlay = styled(GridOverlay)(({ theme }) => ({
     flexDirection: "column",
     "& .ant-empty-img-1": {
@@ -82,6 +126,7 @@ function Meeting({ match }) {
       </StyledGridOverlay>
     );
   }
+
   function CustomLoadingOverlay() {
     return (
       <GridOverlay>
@@ -100,14 +145,159 @@ function Meeting({ match }) {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await api.get(`/meeting`);
-      setDataRows(response.data);
-    };
+  const handleEdit = (meeting) => {
+    setSelectedMeeting(meeting);
+    setFormData({
+      date: new Date(meeting.date).toISOString().split("T")[0],
+      start_time: new Date(meeting.start_time).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      end_time: new Date(meeting.end_time).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      employee: meeting.employee.map((emp) => emp._id),
+    });
+    setUpdateModalOpen(true);
+  };
 
-    fetchData();
-  }, [match]);
+  const handleFieldChange = (fieldName, value) => {
+    setFormData({
+      ...formData,
+      [fieldName]: value,
+    });
+  };
+
+  const handleDelete = (meeting) => {
+    setSelectedMeeting(meeting);
+    setDeleteModalOpen(true);
+  };
+
+  const handleCloseUpdateModal = () => {
+    setUpdateModalOpen(false);
+    setSelectedMeeting(null);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setSelectedMeeting(null);
+  };
+
+  const handleEditMeeting = async (e) => {
+    try {
+      e.preventDefault();
+      // Parse start_time and end_time into date objects
+      const date = new Date(formData.date + "T00:00:00");
+      const startTime = new Date(
+        formData.date + "T" + formData.start_time + ":00"
+      );
+      const endTime = new Date(formData.date + "T" + formData.end_time + ":00");
+
+      if (selectedMeeting) {
+        const response = await api.put(`/meeting/${selectedMeeting._id}`, {
+          ...formData,
+          date: date.toISOString(),
+          start_time: startTime,
+          end_time: endTime,
+        });
+
+        if (response.status === 200) {
+          setDataRows((prevState) => {
+            const updatedRows = prevState.map((row) =>
+              row._id === selectedMeeting._id ? response.data : row
+            );
+            return updatedRows;
+          });
+          console.log("Meeting updated successfully:", response.data);
+        } else {
+          console.error("Error updating meeting:", response.data);
+        }
+      }
+    } catch (error) {
+      console.error("An error occurred while updating meeting:", error);
+    }
+    handleCloseUpdateModal();
+  };
+
+  const handleDeleteMeeting = async () => {
+    try {
+      if (selectedMeeting) {
+        const response = await api.delete(`/meeting/${selectedMeeting._id}`);
+        if (response.status === 200) {
+          setDataRows((prevState) =>
+            prevState.filter((row) => row._id !== selectedMeeting._id)
+          );
+          console.log("Meeting deleted successfully:", response.data);
+        } else {
+          console.error("Error deleting meeting:", response.data);
+        }
+      }
+    } catch (error) {
+      console.error("An error occurred while deleting meeting:", error);
+    }
+    handleCloseDeleteModal(false);
+  };
+
+  //? UPDATE FORM
+  const populateForm = () => {
+    if (selectedMeeting) {
+      return (
+        <form>
+          <TextField
+            label="Date"
+            type="date"
+            variant="outlined"
+            margin="normal"
+            value={formData.date}
+            onChange={(e) => handleFieldChange("date", e.target.value)}
+            fullWidth
+            required
+          />
+
+          <TextField
+            label="Heure de début"
+            type="time"
+            variant="outlined"
+            margin="normal"
+            value={formData.start_time}
+            onChange={(e) => handleFieldChange("start_time", e.target.value)}
+            fullWidth
+            required
+          />
+
+          <TextField
+            label="Heure de fin"
+            type="time"
+            variant="outlined"
+            margin="normal"
+            value={formData.end_time}
+            onChange={(e) => handleFieldChange("end_time", e.target.value)}
+            fullWidth
+            required
+          />
+
+          {/* Employee Select Field */}
+          <FormControl fullWidth>
+            <InputLabel>Employée(s)</InputLabel>
+            <Select
+              multiple
+              value={formData.employee}
+              onChange={(e) => handleFieldChange("employee", e.target.value)}
+              fullWidth
+            >
+              {/* Map through your existing users and create options */}
+              {employees.map((employee) => (
+                <MenuItem key={employee._id} value={employee._id}>
+                  {employee.Username}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </form>
+      );
+    }
+  };
 
   const dataColumns = [
     {
@@ -116,9 +306,16 @@ function Meeting({ match }) {
       minWidth: 400,
       flex: 1,
       renderCell: (params) => (
-        <div>{params.value.map((element, key) => element.Username + ", ")}</div>
+        <div>
+          {params.value.map((element, key) => (
+            <span key={key}>
+              {element.Username ? element.Username + ", " : "N/A, "}
+            </span>
+          ))}
+        </div>
       ),
     },
+
     {
       field: "date",
       headerName: "Date",
@@ -130,7 +327,6 @@ function Meeting({ match }) {
         return valueFormatted;
       },
     },
-
     {
       field: "start_time",
       headerName: "Commence à :",
@@ -156,6 +352,30 @@ function Meeting({ match }) {
         return valueFormatted;
       },
     },
+    {
+      field: "actions",
+      headerName: "Actions",
+      sortable: false,
+      minWidth: 200,
+      renderCell: (params) => (
+        <div className="action-buttons">
+          <Button
+            color="primary"
+            startIcon={<EditIcon />}
+            onClick={() => handleEdit(params.row)}
+          >
+            Edit
+          </Button>
+          <Button
+            color="secondary"
+            startIcon={<DeleteIcon />}
+            onClick={() => handleDelete(params.row)}
+          >
+            Delete
+          </Button>
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -178,9 +398,52 @@ function Meeting({ match }) {
               NoResultsOverlay: () => CustomNoRowsOverlay("Pas de Résultats"),
             }}
             disableSelectionOnClick
+            onSelectionModelChange={(selection) => {
+              if (selection.selectionModel.length > 0) {
+                const selectedRowIndex = selection.selectionModel[0];
+                const meeting = dataRows[selectedRowIndex];
+                setSelectedMeeting(meeting);
+              } else {
+                setSelectedMeeting(null);
+              }
+            }}
           />
         </Card>
       </main>
+
+      {/* UPDATE MODAL */}
+      <Dialog open={updateModalOpen} onClose={handleCloseUpdateModal}>
+        <DialogTitle>Modifier la Réunion</DialogTitle>
+        <DialogContent>{populateForm()}</DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseUpdateModal} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={handleEditMeeting} color="primary">
+            Valider
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Modal */}
+      <Dialog open={deleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
+        <DialogTitle>Delete Meeting</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {selectedMeeting
+              ? ` Do you want to delete the meeting ${selectedMeeting.name}?`
+              : "No meeting selected."}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteModalOpen(false)} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={handleDeleteMeeting} color="secondary">
+            Supprimer
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

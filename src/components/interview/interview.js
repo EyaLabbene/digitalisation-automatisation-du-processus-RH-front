@@ -1,7 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../api";
-import { Card, Box, LinearProgress, styled } from "@mui/material";
+import { Card, Box, LinearProgress, styled, Button } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+} from "@mui/material";
 import {
   DataGrid,
   GridToolbar,
@@ -16,6 +30,26 @@ function Interview({ match }) {
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [dataRows, setDataRows] = useState([]);
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedInterview, setSelectedInterview] = useState(null);
+  const [existingUsers, setExistingUsers] = useState([]);
+  useEffect(() => {
+    console.log("khad");
+    console.log(selectedInterview);
+  }, [selectedInterview]);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await api.get("/user");
+        setExistingUsers(response.data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, [match]);
   const StyledGridOverlay = styled(GridOverlay)(({ theme }) => ({
     flexDirection: "column",
     "& .ant-empty-img-1": {
@@ -35,6 +69,84 @@ function Interview({ match }) {
       fill: theme.palette.mode === "light" ? "#f5f5f5" : "#fff",
     },
   }));
+  const handleEditInterview = (interview) => {
+    setSelectedInterview({
+      ...interview,
+      start_date: interview.start_date.split("Z")[0],
+      end_date: interview.end_date.split("Z")[0],
+    });
+    setUpdateModalOpen(true);
+  };
+
+  const handleDeleteInterview = (interview) => {
+    setSelectedInterview(interview);
+    setDeleteModalOpen(true);
+  };
+
+  const handleCloseUpdateModal = () => {
+    setUpdateModalOpen(false);
+    setSelectedInterview(null);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setSelectedInterview(null);
+  };
+
+  const handleUpdateInterview = async () => {
+    try {
+      if (selectedInterview) {
+        const response = await api.put(
+          `/interview/${selectedInterview._id}`,
+          selectedInterview
+        );
+
+        if (response.status === 200) {
+          setDataRows((prevState) => {
+            const updatedRows = prevState.map((row) =>
+              row._id === selectedInterview._id ? response.data : row
+            );
+            return updatedRows;
+          });
+          console.log("Interview updated successfully:", response.data);
+        } else {
+          console.error("Error updating interview:", response.data);
+        }
+      }
+    } catch (error) {
+      console.error("An error occurred while updating interview:", error);
+    }
+    handleCloseUpdateModal();
+  };
+
+  const handleDeleteInterviewConfirmed = async () => {
+    try {
+      if (selectedInterview) {
+        const response = await api.delete(
+          `/interview/${selectedInterview._id}`
+        );
+
+        if (response.status === 200) {
+          setDataRows((prevState) =>
+            prevState.filter((row) => row._id !== selectedInterview._id)
+          );
+          console.log("Interview deleted successfully:", response.data);
+        } else {
+          console.error("Error deleting interview:", response.data);
+        }
+      }
+    } catch (error) {
+      console.error("An error occurred while deleting interview:", error);
+    }
+    handleCloseDeleteModal();
+  };
+
+  const handleFieldChange = (fieldName, value) => {
+    setSelectedInterview({
+      ...selectedInterview,
+      [fieldName]: value,
+    });
+  };
 
   function CustomNoRowsOverlay(text) {
     return (
@@ -154,6 +266,30 @@ function Interview({ match }) {
         return valueFormatted;
       },
     },
+    {
+      field: "actions",
+      headerName: "Actions",
+      sortable: false,
+      minWidth: 200,
+      renderCell: (params) => (
+        <div className="action-buttons">
+          <Button
+            color="primary"
+            startIcon={<EditIcon />}
+            onClick={() => handleEditInterview(params.row)}
+          >
+            Edit
+          </Button>
+          <Button
+            color="secondary"
+            startIcon={<DeleteIcon />}
+            onClick={() => handleDeleteInterview(params.row)}
+          >
+            Delete
+          </Button>
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -176,9 +312,108 @@ function Interview({ match }) {
               NoResultsOverlay: () => CustomNoRowsOverlay("Pas de Résultats"),
             }}
             disableSelectionOnClick
+            onSelectionModelChange={(selection) => {
+              if (selection.selectionModel.length > 0) {
+                const selectedRowIndex = selection.selectionModel[0];
+                const interview = dataRows[selectedRowIndex];
+                setSelectedInterview(interview);
+              } else {
+                setSelectedInterview(null);
+              }
+            }}
           />
         </Card>
       </main>
+      {/* Update  Modal */}
+      <Dialog open={updateModalOpen} onClose={handleCloseUpdateModal}>
+        <DialogTitle>Modifier l'entretien</DialogTitle>
+        <DialogContent>
+          {selectedInterview && (
+            <form>
+              <FormControl fullWidth>
+                <InputLabel>Recruteur</InputLabel>
+                <Select
+                  value={selectedInterview.interviewer._id}
+                  onChange={(e) =>
+                    handleFieldChange("interviewer", { _id: e.target.value })
+                  }
+                  fullWidth
+                >
+                  {/* Map through your existing users and create options */}
+                  {existingUsers.map((interviewer) => (
+                    <MenuItem key={interviewer._id} value={interviewer._id}>
+                      {interviewer.Username}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel>Candidat</InputLabel>
+                <Select
+                  value={selectedInterview.interviewee._id}
+                  onChange={(e) =>
+                    handleFieldChange("interviewee", { _id: e.target.value })
+                  }
+                  fullWidth
+                >
+                  {/* Map through your existing users and create options */}
+                  {existingUsers.map((interviewer) => (
+                    <MenuItem key={interviewer._id} value={interviewer._id}>
+                      {interviewer.Username}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <TextField
+                fullWidth
+                type="datetime-local"
+                label="Commence à"
+                variant="outlined"
+                margin="normal"
+                value={selectedInterview.start_date}
+                onChange={(e) =>
+                  handleFieldChange("start_date", e.target.value)
+                }
+              />
+              <TextField
+                fullWidth
+                type="datetime-local"
+                label="Se termine à"
+                variant="outlined"
+                margin="normal"
+                value={selectedInterview.end_date}
+                onChange={(e) => handleFieldChange("end_date", e.target.value)}
+              />
+            </form>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseUpdateModal} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={handleUpdateInterview} color="primary">
+            Valider
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* Delete Modal   */}
+      <Dialog open={deleteModalOpen} onClose={handleCloseDeleteModal}>
+        <DialogTitle>Delete Interview</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Voulez Vous Supprimer cet entretien : ?
+          </DialogContentText>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={handleCloseDeleteModal} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={handleDeleteInterviewConfirmed} color="secondary">
+            Supprimer
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
