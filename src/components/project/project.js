@@ -35,6 +35,10 @@ function Project({ match }) {
   const [selectedProject, setSelectedProject] = useState(null);
   const [existingUsers, setExistingUsers] = useState([]);
   useEffect(() => {
+    console.log("here");
+    console.log(selectedProject);
+  }, [selectedProject]);
+  useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await api.get("/user");
@@ -292,9 +296,9 @@ function Project({ match }) {
               <FormControl fullWidth>
                 <InputLabel>Employé</InputLabel>
                 <Select
-                  value={selectedProject.employee}
+                  value={selectedProject.employee._id}
                   onChange={(e) =>
-                    handleFieldChange("employee", e.target.value)
+                    handleFieldChange("employee", { _id: e.target.value })
                   }
                   fullWidth
                 >
