@@ -67,20 +67,6 @@ export default function CreatetechnicalTest() {
     setTitle(value);
   };
   const [title, setTitle] = useState("");
-  const fetchQuestions = async () => {
-    let data = null; // Initialisation de la variable data
-
-    try {
-      const response = await fetch("/questionResponse");
-      data = await response.json();
-      console.log(data); // Vérifiez la structure de la réponse dans la console
-    } catch (error) {
-      console.error("Erreur lors de la récupération des questions :", error);
-    }
-
-    setQuestions(data);
-    fetchQuestions();
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../api";
-import { Card, Box, LinearProgress, styled } from "@mui/material";
+import { Card, Box, LinearProgress, styled, Button } from "@mui/material";
+
 import {
   DataGrid,
   GridToolbar,
@@ -10,9 +11,9 @@ import {
 } from "@mui/x-data-grid";
 import { Visibility } from "@mui/icons-material";
 
-import "./interviewCandidate.scss";
+import "./PassTest.scss";
 
-function InterviewCandidate({ match }) {
+function PassTest({ match }) {
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [dataRows, setDataRows] = useState([]);
@@ -98,12 +99,10 @@ function InterviewCandidate({ match }) {
     );
   }
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     const fetchData = async () => {
-      const response = await api.get(`/interview/mine`);
-      console.log(response);
+      const response = await api.get(`/userTest/mine`);
+      console.log(response.data);
       setDataRows(response.data);
     };
 
@@ -112,46 +111,30 @@ function InterviewCandidate({ match }) {
 
   const dataColumns = [
     {
-      field: "interviewer",
-      headerName: "Recruteur",
+      field: "techTest",
+      headerName: "Test Technique",
       minWidth: 400,
       flex: 1,
       valueFormatter: (params) => {
-        return params.value?.Username;
-      },
-    },
-
-    {
-      field: "start_date",
-      headerName: "Commence à :",
-      minWidth: 200,
-      valueFormatter: (params) => {
-        const valueFormatted = new Date(params.value).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-
-        return valueFormatted;
+        return params.value?.title;
       },
     },
     {
-      field: "end_date",
-      headerName: "se termine à :",
+      field: "actions",
+      headerName: "Actions",
+      sortable: false,
       minWidth: 200,
-      valueFormatter: (params) => {
-        const valueFormatted = new Date(params.value).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-        return valueFormatted;
-      },
+      renderCell: () => (
+        <div className="action-buttons">
+          <Button color="primary">Passer</Button>
+        </div>
+      ),
     },
   ];
 
   return (
-    <div className="interviewsCandidateScreen">
-      <header>Entretiens</header>
-
+    <div className="passTestScreen">
+      <header>Passer le test</header>
       <main>
         <Card sx={{ flex: 1 }}>
           <DataGrid
@@ -176,4 +159,4 @@ function InterviewCandidate({ match }) {
   );
 }
 
-export default InterviewCandidate;
+export default PassTest;

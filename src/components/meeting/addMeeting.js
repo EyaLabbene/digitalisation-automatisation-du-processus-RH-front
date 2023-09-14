@@ -80,20 +80,6 @@ export default function CreateMeeting() {
   const [start_time, setStart] = useState("");
   const [end_time, setEnd] = useState("");
   const navigate = useNavigate();
-  const fetchEmployee = async () => {
-    let data = null; // Initialisation de la variable data
-
-    try {
-      const response = await fetch("/user");
-      data = await response.json();
-      console.log(data); // Vérifiez la structure de la réponse dans la console
-    } catch (error) {
-      console.error("Erreur lors de la récupération des employés :", error);
-    }
-
-    setEmployee(data);
-    fetchEmployee();
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();

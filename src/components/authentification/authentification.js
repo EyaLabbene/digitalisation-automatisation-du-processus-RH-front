@@ -43,6 +43,7 @@ function Login() {
         if (response.data.role === "admin") {
           navigate("/dashboard/user");
         } else {
+          console.log("coucou");
           navigate("/dashboardCandidate");
         }
 

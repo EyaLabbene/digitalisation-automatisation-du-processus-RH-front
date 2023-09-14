@@ -354,6 +354,30 @@ export default function HomeScreen() {
                   sx={{ pl: 4 }}
                   selected={location.pathname === paths.ajouttables}
                   onClick={() => {
+                    navigate("/dashboard/AfficherResultat");
+                  }}
+                >
+                  <ListItemIcon>
+                    <AddCircle />
+                  </ListItemIcon>
+                  <ListItemText primary="Afficher le résultat" />
+                </ListItemButton>
+                <ListItemButton
+                  sx={{ pl: 4 }}
+                  selected={location.pathname === paths.ajouttables}
+                  onClick={() => {
+                    navigate("/dashboard/AffecterTest");
+                  }}
+                >
+                  <ListItemIcon>
+                    <AddCircle />
+                  </ListItemIcon>
+                  <ListItemText primary="Affecter un test " />
+                </ListItemButton>
+                <ListItemButton
+                  sx={{ pl: 4 }}
+                  selected={location.pathname === paths.ajouttables}
+                  onClick={() => {
                     navigate("/dashboard/createTechnicalTest");
                   }}
                 >

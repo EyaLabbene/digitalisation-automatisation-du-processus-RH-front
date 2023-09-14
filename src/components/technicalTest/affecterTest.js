@@ -14,7 +14,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-
+import ListesQuesRep from "./listesQuestRep";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
@@ -34,47 +34,59 @@ const MenuProps = {
   },
 };
 
-export default function CreateProject() {
-  useEffect(() => {
-    getData();
-  }, []);
-  async function getData() {
-    const response = await api.get(`/user`);
-    console.log(response.data);
-    setListEmployee(response.data);
-  }
+export default function AffectertechnicalTest() {
   const theme = useTheme();
-  const [employee, setEmployee] = useState([]);
-  const [listEmpolyee, setListEmployee] = useState([]);
+  const [techTest, setTechTest] = useState([]);
+  const [listTests, setListTests] = useState([]);
   const navigate = useNavigate();
+
   useEffect(() => {
-    console.log(employee);
-  }, [employee]);
+    console.log(techTest);
+  }, [techTest]);
   const handleChange = (event) => {
     const {
       target: { value },
     } = event;
-    setEmployee(
+    setTechTest(
       // On autofill we get a stringified value.
       typeof value === "string" ? value.split(",") : value
     );
   };
-  const handleChangeTitle = (event) => {
+  const handleChangeUserTestee = (event) => {
     const {
       target: { value },
     } = event;
-    setTitle(value);
+    setUserTestee(value);
   };
-  const [title, setTitle] = useState("");
+  useEffect(() => {
+    getData();
+  }, []);
+  async function getData() {
+    const responseUser = await api.get(`/user/candidate`);
+    console.log(responseUser.data);
+    setListCandidat(responseUser.data);
+    const responseTest = await api.get(`/techTest`);
+    console.log(responseTest.data);
+    setListTests(responseTest.data);
+  }
+  const [listCandidat, setListCandidat] = useState([]);
+
+  const [userTestee, setUserTestee] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post("/project", {
-        employee,
-        title,
+      const response = await api.post("/userTest", {
+        techTest,
+        userTestee,
       });
-      navigate("/dashboard/project");
+      navigate("/dashboard/AfficherResultat");
+      console.log(response.data);
+      console.log("succes");
+
+      // window.localStorage.setItem("token", "bearer " + response.data.token);
+
+      console.log(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -96,30 +108,37 @@ export default function CreateProject() {
             Create
           </Typography>
           <form onSubmit={handleSubmit}>
-            <Grid item xs={12}>
-              <TextField
-                autoComplete="title"
-                name="title"
-                required
-                fullWidth
-                id="title"
-                label="Tittre"
-                value={title}
-                onChange={handleChangeTitle}
-              />
-            </Grid>
             <div>
               <FormControl sx={{ m: 1, width: 300 }}>
-                <InputLabel id="multiselectEmployeeLabel">Employés</InputLabel>
+                <InputLabel id="multiselectTestsLabel">Tests</InputLabel>
                 <Select
-                  labelId="multiselectEmployeeLabel"
-                  id="multiselectEmployee"
-                  value={employee}
+                  labelId="multiselectTestsLabel"
+                  id="multiselectTests"
+                  value={techTest}
                   onChange={handleChange}
                   input={<OutlinedInput label="Name" />}
                   MenuProps={MenuProps}
                 >
-                  {listEmpolyee.map((user) => (
+                  {listTests.map((test) => (
+                    <MenuItem key={test._id} value={test._id}>
+                      {test.title}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+            <div>
+              <FormControl sx={{ m: 1, width: 300 }}>
+                <InputLabel id="multiselectCandidatLabel">Candidats</InputLabel>
+                <Select
+                  labelId="multiselectCandidatsLabel"
+                  id="multiselectCandidat"
+                  value={userTestee}
+                  onChange={handleChangeUserTestee}
+                  input={<OutlinedInput label="Name" />}
+                  MenuProps={MenuProps}
+                >
+                  {listCandidat.map((user) => (
                     <MenuItem key={user._id} value={user._id}>
                       {user.first_name + " " + user.last_name}
                     </MenuItem>

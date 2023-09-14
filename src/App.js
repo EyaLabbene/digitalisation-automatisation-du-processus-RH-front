@@ -20,11 +20,14 @@ import HomeScreenCandidate from "./components/navigationCandidate/navigationCand
 import PosteCandidate from "./components/postecandidate/posteCandidate";
 import SignUp from "./components/Sign up/signup";
 import CreateQuestionResponse from "./components/technicalTest/createQuestionPesponse";
+import AffectertechnicalTest from "./components/technicalTest/affecterTest";
 import ListesQuesRep from "./components/technicalTest/listesQuestRep";
 import CreatetechnicalTest from "./components/technicalTest/createTechnicalTest";
 import CreateProject from "./components/project/addproject";
 import CreateInterview from "./components/interview/addInterview";
 import CreateMeeting from "./components/meeting/addMeeting";
+import AfficherResultat from "./components/technicalTest/afficherRésultat";
+import PassTest from "./components/technicalTestCandidate/PassTest";
 
 import CreatePoste from "./components/poste/addPoste";
 import InterviewCandidate from "./components/interviewCandidate/interviewCandidate";
@@ -67,6 +70,14 @@ function App() {
             element={<CreateQuestionResponse />}
           />
           <Route
+            path="/dashboard/AffecterTest"
+            element={<AffectertechnicalTest />}
+          />
+          <Route
+            path="/dashboard/AfficherResultat"
+            element={<AfficherResultat />}
+          />
+          <Route
             path="/dashboard/questionResponse"
             element={<QuestionResponse />}
           />
@@ -84,6 +95,7 @@ function App() {
             path="/dashboardCandidate/EntretienCandidate"
             element={<InterviewCandidate />}
           />
+          <Route path="/dashboardCandidate/passTest" element={<PassTest />} />
         </Route>
       </Routes>
     </Router>

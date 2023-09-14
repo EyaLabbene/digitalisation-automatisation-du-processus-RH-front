@@ -10,9 +10,9 @@ import {
 } from "@mui/x-data-grid";
 import { Visibility } from "@mui/icons-material";
 
-import "./interviewCandidate.scss";
+import "./afficherRésultat.scss";
 
-function InterviewCandidate({ match }) {
+function AfficherResultat({ match }) {
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [dataRows, setDataRows] = useState([]);
@@ -102,8 +102,7 @@ function InterviewCandidate({ match }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await api.get(`/interview/mine`);
-      console.log(response);
+      const response = await api.get(`/userTest`);
       setDataRows(response.data);
     };
 
@@ -112,46 +111,53 @@ function InterviewCandidate({ match }) {
 
   const dataColumns = [
     {
-      field: "interviewer",
-      headerName: "Recruteur",
+      field: "userTestee",
+      headerName: "Candidat",
       minWidth: 400,
       flex: 1,
       valueFormatter: (params) => {
         return params.value?.Username;
       },
     },
-
     {
-      field: "start_date",
-      headerName: "Commence à :",
-      minWidth: 200,
+      field: "techTest",
+      headerName: "Test Technique",
+      minWidth: 400,
+      flex: 1,
       valueFormatter: (params) => {
-        const valueFormatted = new Date(params.value).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-
-        return valueFormatted;
+        return params.value?.title;
       },
     },
+
     {
-      field: "end_date",
-      headerName: "se termine à :",
+      field: "mark",
+      headerName: "note ",
       minWidth: 200,
       valueFormatter: (params) => {
-        const valueFormatted = new Date(params.value).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-        return valueFormatted;
+        return params.value ?? "Pas encore passé le test";
       },
+    },
+
+    {
+      field: "actions",
+      type: "actions",
+      width: 20,
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<Visibility />}
+          onClick={async () => {
+            console.log("aa");
+          }}
+          label={"Marquer comme lu"}
+          showInMenu
+        />,
+      ],
     },
   ];
 
   return (
-    <div className="interviewsCandidateScreen">
-      <header>Entretiens</header>
-
+    <div className="afficherResultatScreen">
+      <header>Résultats des tests</header>
       <main>
         <Card sx={{ flex: 1 }}>
           <DataGrid
@@ -176,4 +182,4 @@ function InterviewCandidate({ match }) {
   );
 }
 
-export default InterviewCandidate;
+export default AfficherResultat;

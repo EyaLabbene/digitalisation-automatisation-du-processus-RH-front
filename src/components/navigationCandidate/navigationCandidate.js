@@ -181,7 +181,7 @@ export default function HomeScreenCandidate() {
                   selected={location.pathname === paths.tables}
                   sx={{ pl: 4 }}
                   onClick={() => {
-                    navigate("/dashboard/techtest");
+                    navigate("/dashboardCandidate/passTest");
                   }}
                 >
                   <ListItemIcon>
@@ -193,6 +193,15 @@ export default function HomeScreenCandidate() {
             </Collapse>
           </List>
         </nav>
+        <div
+          className="logout"
+          onClick={() => {
+            window.localStorage.clear();
+            navigate("/");
+          }}
+        >
+          Déconnexion
+        </div>
       </section>
       <section className="right">
         <Outlet />

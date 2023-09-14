@@ -87,20 +87,6 @@ export default function CreateInterview() {
   };
   const [start_date, setStart] = useState("");
   const [end_date, setEnd] = useState("");
-  const fetchUser = async () => {
-    let data = null; // Initialisation de la variable data
-
-    try {
-      const response = await fetch("/user");
-      data = await response.json();
-      console.log(data); // Vérifiez la structure de la réponse dans la console
-    } catch (error) {
-      console.error("Erreur lors de la récupération des employés :", error);
-    }
-
-    setListUser(data);
-    fetchUser();
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
