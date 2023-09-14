@@ -1,0 +1,35 @@
+.currentTest-container {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  .logo {
+    width: 20%;
+    img {
+      width: 100%;
+    }
+  }
+  .title {
+    font-size: 32px;
+    font-weight: bold;
+  }
+  .statement {
+    font-size: 24px;
+    font-weight: 600;
+    color: blue;
+  }
+  .button {
+    margin-top: 20px;
+    border-radius: 32px;
+    background-color: white;
+    color: #4b7abe;
+    font-family: "Poppins", Helvetica;
+    font-size: 16px;
+    font-weight: 400px;
+    padding: 0 25px 0 25px;
+  }
+}

@@ -33,6 +33,7 @@ import CreatePoste from "./components/poste/addPoste";
 import InterviewCandidate from "./components/interviewCandidate/interviewCandidate";
 
 import { setAuthToken } from "./api";
+import CurrentTest from "./components/technicalTestCandidate/currentTest";
 function App() {
   useEffect(() => {
     if (window.localStorage.getItem("token") !== null) {
@@ -97,6 +98,10 @@ function App() {
           />
           <Route path="/dashboardCandidate/passTest" element={<PassTest />} />
         </Route>
+        <Route
+          path="/dashboardCandidate/currentTest"
+          element={<CurrentTest />}
+        />
       </Routes>
     </Router>
   );

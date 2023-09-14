@@ -17,6 +17,7 @@ function PassTest({ match }) {
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [dataRows, setDataRows] = useState([]);
+  const navigate = useNavigate();
   const StyledGridOverlay = styled(GridOverlay)(({ theme }) => ({
     flexDirection: "column",
     "& .ant-empty-img-1": {
@@ -120,15 +121,35 @@ function PassTest({ match }) {
       },
     },
     {
+      field: "mark",
+      headerName: "note ",
+      minWidth: 200,
+      valueFormatter: (params) => {
+        return params.value ?? "Pas encore passé le test";
+      },
+    },
+    {
       field: "actions",
       headerName: "Actions",
       sortable: false,
       minWidth: 200,
-      renderCell: () => (
-        <div className="action-buttons">
-          <Button color="primary">Passer</Button>
-        </div>
-      ),
+      renderCell: (params) =>
+        !params.row.mark ? (
+          <div
+            className="action-buttons"
+            onClick={() => {
+              navigate("/dashboardCandidate/currentTest", {
+                state: {
+                  testId: params.id,
+                },
+              });
+            }}
+          >
+            <Button color="primary">Passer</Button>
+          </div>
+        ) : (
+          <div>Vous avez déja passé le test</div>
+        ),
     },
   ];
 
