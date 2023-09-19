@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./navigation.scss";
 import { Menu, ClickAwayListener } from "@mui/material";
+import logo from "../../assets/FINAALLRR.png";
 import {
   AddCircle,
+  AddPhotoAlternate,
   Category,
   Event,
   Group,
@@ -117,6 +119,9 @@ export default function HomeScreen() {
         style={openBar ? { display: "block" } : { display: "none" }}
       >
         <nav>
+          <div className="logo">
+            <img alt="Element" src={logo} height={150} />
+          </div>
           <List
             sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
             component="nav"
@@ -136,7 +141,7 @@ export default function HomeScreen() {
               <ListItemIcon>
                 <Category />
               </ListItemIcon>
-              <ListItemText primary="Projets" />
+              <ListItemText primary="Projets" sx={{ color: "blue" }} />
               {openCategories ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={openCategories} timeout="auto" unmountOnExit>
@@ -151,7 +156,10 @@ export default function HomeScreen() {
                   <ListItemIcon>
                     <Category />
                   </ListItemIcon>
-                  <ListItemText primary="Liste des projets" />
+                  <ListItemText
+                    primary="Liste des projets"
+                    sx={{ color: "blue" }}
+                  />
                 </ListItemButton>
                 <ListItemButton
                   sx={{ pl: 4 }}
@@ -163,15 +171,18 @@ export default function HomeScreen() {
                   <ListItemIcon>
                     <AddCircle />
                   </ListItemIcon>
-                  <ListItemText primary="Ajouter un projet" />
+                  <ListItemText
+                    primary="Ajouter un projet"
+                    sx={{ color: "blue" }}
+                  />
                 </ListItemButton>
               </List>
             </Collapse>
             <ListItemButton onClick={handleClickProduits}>
               <ListItemIcon>
-                <ShoppingCart />
+                <Event />
               </ListItemIcon>
-              <ListItemText primary="Entretien" />
+              <ListItemText primary="Entretien" sx={{ color: "blue" }} />
               {openProduits ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={openProduits} timeout="auto" unmountOnExit>
@@ -184,7 +195,7 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <ShoppingCart />
+                    <Event />
                   </ListItemIcon>
                   <ListItemText primary="Liste des entretiens" />
                 </ListItemButton>
@@ -196,7 +207,7 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <AddCircle />
+                    <AddPhotoAlternate sx={{ color: "blue" }} />
                   </ListItemIcon>
                   <ListItemText primary="Planifier un entretien" />
                 </ListItemButton>
@@ -204,7 +215,7 @@ export default function HomeScreen() {
             </Collapse>
             <ListItemButton onClick={handleClickStock}>
               <ListItemIcon>
-                <Inventory />
+                <Inventory sx={{ color: "blue" }} />
               </ListItemIcon>
               <ListItemText primary="Postes" />
               {openStock ? <ExpandLess /> : <ExpandMore />}
@@ -219,9 +230,21 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <Inventory />
+                    <Inventory sx={{ color: "blue" }} />
                   </ListItemIcon>
                   <ListItemText primary="Les Postes" />
+                </ListItemButton>
+                <ListItemButton
+                  selected={location.pathname === paths.stock}
+                  sx={{ pl: 4 }}
+                  onClick={() => {
+                    navigate("/dashboard/candidacy");
+                  }}
+                >
+                  <ListItemIcon>
+                    <Inventory />
+                  </ListItemIcon>
+                  <ListItemText primary="Les Candidatures" />
                 </ListItemButton>
                 <ListItemButton
                   sx={{ pl: 4 }}
@@ -280,18 +303,6 @@ export default function HomeScreen() {
             <Collapse in={openUsers} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
                 <ListItemButton
-                  selected={location.pathname === paths.utilisateurs}
-                  sx={{ pl: 4 }}
-                  onClick={() => {
-                    navigate("/dashboard/user");
-                  }}
-                >
-                  <ListItemIcon>
-                    <PeopleOutline />
-                  </ListItemIcon>
-                  <ListItemText primary="Liste des utilisateurs" />
-                </ListItemButton>
-                <ListItemButton
                   sx={{ pl: 4 }}
                   selected={location.pathname === paths.addutilisateurs}
                   onClick={() => {
@@ -299,15 +310,15 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <GroupAdd />
+                    <Group />
                   </ListItemIcon>
-                  <ListItemText primary="Ajouter un utilisateur" />
+                  <ListItemText primary="Liste des utilisateurs" />
                 </ListItemButton>
               </List>
             </Collapse>
             <ListItemButton onClick={handleClickTables}>
               <ListItemIcon>
-                <TableRestaurant />
+                <Category />
               </ListItemIcon>
               <ListItemText primary="Test Techniques" />
               {openTables ? <ExpandLess /> : <ExpandMore />}
@@ -322,7 +333,7 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <TableRestaurant />
+                    <Category />
                   </ListItemIcon>
                   <ListItemText primary="Liste des Tests" />
                 </ListItemButton>

@@ -36,17 +36,24 @@ const MenuProps = {
 
 export default function CreateInterview() {
   useEffect(() => {
-    getData();
+    getDataCandiate();
+    getDataEmployee();
   }, []);
-  async function getData() {
-    const response = await api.get(`/user`);
+  async function getDataCandiate() {
+    const response = await api.get(`/user/candidate`);
     console.log(response.data);
-    setListUser(response.data);
+    setListCandidat(response.data);
+  }
+  async function getDataEmployee() {
+    const response = await api.get(`/user/employee`);
+    console.log(response.data);
+    setListEmployee(response.data);
   }
   const theme = useTheme();
   const [interviewer, setInterviewer] = useState([]);
   const [interviewee, setInterviewee] = useState([]);
-  const [listUser, setListUser] = useState([]);
+  const [listCandidat, setListCandidat] = useState([]);
+  const [listEmployee, setListEmployee] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
     console.log(interviewer);
@@ -85,6 +92,13 @@ export default function CreateInterview() {
     } = event;
     setEnd(value);
   };
+  const handleChangeDate = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setDate(value);
+  };
+  const [date, setDate] = useState("");
   const [start_date, setStart] = useState("");
   const [end_date, setEnd] = useState("");
 
@@ -94,6 +108,7 @@ export default function CreateInterview() {
       const response = await api.post("/interview", {
         interviewer,
         interviewee,
+        date,
         start_date,
         end_date,
       });
@@ -120,6 +135,19 @@ export default function CreateInterview() {
             Create
           </Typography>
           <form onSubmit={handleSubmit}>
+            <Grid item xs={12}>
+              <div>Le</div>
+              <TextField
+                autoComplete="date"
+                name="date"
+                required
+                fullWidth
+                type="date"
+                id="date"
+                value={date}
+                onChange={handleChangeDate}
+              />
+            </Grid>
             <Grid item xs={12}>
               <div>De</div>
               <TextField
@@ -161,7 +189,7 @@ export default function CreateInterview() {
                   input={<OutlinedInput label="Name" />}
                   MenuProps={MenuProps}
                 >
-                  {listUser.map((user) => (
+                  {listEmployee.map((user) => (
                     <MenuItem key={user._id} value={user._id}>
                       {user.first_name + " " + user.last_name}
                     </MenuItem>
@@ -180,7 +208,7 @@ export default function CreateInterview() {
                   input={<OutlinedInput label="Name" />}
                   MenuProps={MenuProps}
                 >
-                  {listUser.map((user) => (
+                  {listCandidat.map((user) => (
                     <MenuItem key={user._id} value={user._id}>
                       {user.first_name + " " + user.last_name}
                     </MenuItem>

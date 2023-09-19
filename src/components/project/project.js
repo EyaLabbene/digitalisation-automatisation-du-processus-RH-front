@@ -41,7 +41,7 @@ function Project({ match }) {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await api.get("/user");
+        const response = await api.get("/user/employee");
         setExistingUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);

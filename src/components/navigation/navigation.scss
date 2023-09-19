@@ -55,6 +55,15 @@
     &::-webkit-scrollbar {
       width: 10px;
     }
+    .logo {
+      width: 30%;
+      display: flex;
+      justify-content: flex-start;
+      align-items: start;
+    }
+    img {
+      width: 40%;
+    }
 
     &::-webkit-scrollbar-track {
       box-shadow: inset 0 0 5px grey;
@@ -120,6 +129,7 @@
     padding: 5px 0;
     font-weight: bold;
     cursor: pointer;
+    border-color: #4b7abe;
   }
 }
 .MuiTypography-root {

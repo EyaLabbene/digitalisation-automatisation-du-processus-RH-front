@@ -33,23 +33,37 @@ function Interview({ match }) {
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedInterview, setSelectedInterview] = useState(null);
-  const [existingUsers, setExistingUsers] = useState([]);
+  const [existingCandidates, setExistingCandidates] = useState([]);
+  const [existingEmployees, setExistingEmployees] = useState([]);
   useEffect(() => {
     console.log("here");
     console.log(selectedInterview);
   }, [selectedInterview]);
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchCandidates = async () => {
       try {
-        const response = await api.get("/user");
-        setExistingUsers(response.data);
+        const response = await api.get("/user/candidate");
+        setExistingCandidates(response.data);
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error("Error fetching candidates:", error);
       }
     };
 
-    fetchUsers();
+    fetchCandidates();
   }, [match]);
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const response = await api.get("/user/employee");
+        setExistingEmployees(response.data);
+      } catch (error) {
+        console.error("Error fetching employees:", error);
+      }
+    };
+
+    fetchEmployees();
+  }, [match]);
+
   const StyledGridOverlay = styled(GridOverlay)(({ theme }) => ({
     flexDirection: "column",
     "& .ant-empty-img-1": {
@@ -240,6 +254,17 @@ function Interview({ match }) {
         return params.value?.Username;
       },
     },
+    {
+      field: "date",
+      headerName: "Date",
+      minWidth: 200,
+      valueFormatter: (params) => {
+        const valueFormatted = new Date(params.value).toLocaleDateString(
+          "en-GB"
+        );
+        return valueFormatted;
+      },
+    },
 
     {
       field: "start_date",
@@ -340,7 +365,7 @@ function Interview({ match }) {
                   fullWidth
                 >
                   {/* Map through your existing users and create options */}
-                  {existingUsers.map((interviewer) => (
+                  {existingEmployees.map((interviewer) => (
                     <MenuItem key={interviewer._id} value={interviewer._id}>
                       {interviewer.Username}
                     </MenuItem>
@@ -357,13 +382,23 @@ function Interview({ match }) {
                   fullWidth
                 >
                   {/* Map through your existing users and create options */}
-                  {existingUsers.map((interviewer) => (
+                  {existingCandidates.map((interviewer) => (
                     <MenuItem key={interviewer._id} value={interviewer._id}>
                       {interviewer.Username}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
+              <TextField
+                label="Date"
+                type="date"
+                variant="outlined"
+                margin="normal"
+                value={selectedInterview.date}
+                onChange={(e) => handleFieldChange("date", e.target.value)}
+                fullWidth
+                required
+              />
               <TextField
                 fullWidth
                 type="datetime-local"

@@ -39,7 +39,7 @@ export default function CreateProject() {
     getData();
   }, []);
   async function getData() {
-    const response = await api.get(`/user`);
+    const response = await api.get(`/user/employee`);
     console.log(response.data);
     setListEmployee(response.data);
   }

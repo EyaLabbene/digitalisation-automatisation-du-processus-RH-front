@@ -48,7 +48,7 @@ function Meeting({ match }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const usersResponse = await api.get("/user");
+        const usersResponse = await api.get("/user/employee");
         setEmployees(usersResponse.data);
 
         const meetingsResponse = await api.get("/meeting");

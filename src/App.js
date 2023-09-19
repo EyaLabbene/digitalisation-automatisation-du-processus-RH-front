@@ -16,7 +16,7 @@ import Poste from "./components/poste/poste";
 import QuestionResponse from "./components/questionResponse/questionResponse";
 import Navigation from "./components/navigation/navigation";
 import HomeScreenCandidate from "./components/navigationCandidate/navigationCandidate";
-
+import Candidacy from "./components/poste/candidacy";
 import PosteCandidate from "./components/postecandidate/posteCandidate";
 import SignUp from "./components/Sign up/signup";
 import CreateQuestionResponse from "./components/technicalTest/createQuestionPesponse";
@@ -28,6 +28,7 @@ import CreateInterview from "./components/interview/addInterview";
 import CreateMeeting from "./components/meeting/addMeeting";
 import AfficherResultat from "./components/technicalTest/afficherRésultat";
 import PassTest from "./components/technicalTestCandidate/PassTest";
+import PosteForm from "./components/postecandidate/posteForm";
 
 import CreatePoste from "./components/poste/addPoste";
 import InterviewCandidate from "./components/interviewCandidate/interviewCandidate";
@@ -51,6 +52,7 @@ function App() {
           <Route path="/dashboard/user" element={<User />} />
           <Route path="/dashboard/userDetail" element={<UserDetails />} />
           <Route path="/dashboard/meeting" element={<Meeting />} />
+          <Route path="/dashboard/candidacy" element={<Candidacy />} />
 
           <Route path="/dashboard/project" element={<Project />} />
           <Route path="/dashboard/techtest" element={<TechnicalTest />} />
@@ -92,6 +94,7 @@ function App() {
             path="/dashboardCandidate/posteCandidate"
             element={<PosteCandidate />}
           />
+          <Route path="/dashboardCandidate/PosteForm" element={<PosteForm />} />
           <Route
             path="/dashboardCandidate/EntretienCandidate"
             element={<InterviewCandidate />}
