@@ -113,7 +113,7 @@ function Complaint({ match }) {
     {
       field: "createdBy",
       headerName: "Requérant",
-      minWidth: 400,
+      minWidth: 100,
       flex: 1,
       valueFormatter: (params) => {
         return params.value?.Username;
@@ -122,13 +122,13 @@ function Complaint({ match }) {
     {
       field: "object",
       headerName: "Objet",
-      minWidth: 400,
+      minWidth: 100,
       flex: 1,
     },
     {
       field: "message",
       headerName: "Message",
-      minWidth: 400,
+      minWidth: 100,
       flex: 1,
     },
 

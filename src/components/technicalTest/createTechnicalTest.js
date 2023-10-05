@@ -102,8 +102,9 @@ export default function CreatetechnicalTest() {
           }}
         >
           <Typography component="h1" variant="h5">
-            Create
+            Ajouter un test
           </Typography>
+          <br></br>
           <form onSubmit={handleSubmit}>
             <Grid item xs={12}>
               <TextField
@@ -118,7 +119,7 @@ export default function CreatetechnicalTest() {
               />
             </Grid>
             <div>
-              <FormControl sx={{ m: 1, width: 300 }}>
+              <FormControl sx={{ m: 2, width: 350 }}>
                 <InputLabel id="multiselectQuestionsLabel">
                   Questions
                 </InputLabel>

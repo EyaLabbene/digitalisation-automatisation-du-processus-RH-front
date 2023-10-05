@@ -427,12 +427,10 @@ function Meeting({ match }) {
 
       {/* Delete Modal */}
       <Dialog open={deleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
-        <DialogTitle>Delete Meeting</DialogTitle>
+        <DialogTitle>Supprimer la réunion</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {selectedMeeting
-              ? ` Do you want to delete the meeting ${selectedMeeting.name}?`
-              : "No meeting selected."}
+            Voulez-vous supprimer cette réunion ?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

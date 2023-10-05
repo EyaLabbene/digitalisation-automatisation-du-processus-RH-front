@@ -70,4 +70,12 @@
     align-items: center; /* Vertically center-align buttons */
     gap: 5px; /* Adjust the gap between buttons as needed */
   }
+  .overlap {
+    background-color: #4b7abe;
+    border-radius: 11.5px;
+    height: 30px;
+    width: 100px;
+    color: #ffffff;
+    font-family: "Poppins", Helvetica;
+  }
 }

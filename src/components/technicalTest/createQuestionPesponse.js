@@ -84,8 +84,9 @@ export default function CreateQuestionResponse() {
           }}
         >
           <Typography component="h1" variant="h5">
-            Create
+            Ajouter une question
           </Typography>
+          <br></br>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
@@ -158,15 +159,6 @@ export default function CreateQuestionResponse() {
                   autoComplete="mark"
                   value={mark}
                   onChange={(e) => setMark(e.target.value)}
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={
-                    <Checkbox value="allowExtraEmails" color="primary" />
-                  }
-                  label="I want to receive inspiration, marketing promotions and updates via email."
                 />
               </Grid>
             </Grid>

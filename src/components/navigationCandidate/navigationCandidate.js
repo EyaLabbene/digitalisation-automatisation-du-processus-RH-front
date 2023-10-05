@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "./navigationCandidate.scss";
 import { Menu, ClickAwayListener } from "@mui/material";
+import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
+import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
+import logo from "../../assets/FINAALLRR.png";
 import {
   AddCircle,
   Category,
+  AddPhotoAlternate,
   Event,
   Group,
   GroupAdd,
@@ -117,15 +121,18 @@ export default function HomeScreenCandidate() {
         style={openBar ? { display: "block" } : { display: "none" }}
       >
         <nav>
+          <div className="logo">
+            <img alt="Element" src={logo} height={150} />
+          </div>
           <List
             sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
             component="nav"
           >
             <ListItemButton onClick={handleClickStock}>
               <ListItemIcon>
-                <Inventory />
+                <AddPhotoAlternate sx={{ color: "#00008B" }} />
               </ListItemIcon>
-              <ListItemText primary="Postes" />
+              <ListItemText primary="Postes" sx={{ color: "#00008B" }} />
               {openStock ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={openStock} timeout="auto" unmountOnExit>
@@ -138,17 +145,20 @@ export default function HomeScreenCandidate() {
                   }}
                 >
                   <ListItemIcon>
-                    <Inventory />
+                    <AddPhotoAlternate sx={{ color: "#00008B" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Les Postes" />
+                  <ListItemText
+                    primary="Les Postes"
+                    sx={{ color: "#00008B" }}
+                  />
                 </ListItemButton>
               </List>
             </Collapse>
             <ListItemButton onClick={handleClickStock}>
               <ListItemIcon>
-                <Inventory />
+                <CalendarMonthOutlinedIcon sx={{ color: "#00008B" }} />
               </ListItemIcon>
-              <ListItemText primary="Entretiens" />
+              <ListItemText primary="Entretiens" sx={{ color: "#00008B" }} />
               {openStock ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={openStock} timeout="auto" unmountOnExit>
@@ -161,18 +171,24 @@ export default function HomeScreenCandidate() {
                   }}
                 >
                   <ListItemIcon>
-                    <Inventory />
+                    <CalendarMonthOutlinedIcon sx={{ color: "#00008B" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Les Entretiens" />
+                  <ListItemText
+                    primary="Les Entretiens"
+                    sx={{ color: "#00008B" }}
+                  />
                 </ListItemButton>
               </List>
             </Collapse>
 
             <ListItemButton onClick={handleClickTables}>
               <ListItemIcon>
-                <TableRestaurant />
+                <AssignmentOutlinedIcon sx={{ color: "#00008B" }} />
               </ListItemIcon>
-              <ListItemText primary="Test Techniques" />
+              <ListItemText
+                primary="Test Techniques"
+                sx={{ color: "#00008B" }}
+              />
               {openTables ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={openTables} timeout="auto" unmountOnExit>
@@ -185,9 +201,12 @@ export default function HomeScreenCandidate() {
                   }}
                 >
                   <ListItemIcon>
-                    <TableRestaurant />
+                    <AssignmentOutlinedIcon sx={{ color: "#00008B" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Liste des Tests" />
+                  <ListItemText
+                    primary="Liste des Tests"
+                    sx={{ color: "#00008B" }}
+                  />
                 </ListItemButton>
               </List>
             </Collapse>

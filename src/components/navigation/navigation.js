@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import "./navigation.scss";
 import { Menu, ClickAwayListener } from "@mui/material";
 import logo from "../../assets/FINAALLRR.png";
+import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
+import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
+import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
 import {
   AddCircle,
   AddPhotoAlternate,
@@ -133,15 +136,18 @@ export default function HomeScreen() {
               }}
             >
               <ListItemIcon>
-                <SendIcon />
+                <SendIcon sx={{ color: "#00008B" }} />
               </ListItemIcon>
-              <ListItemText primary="Tableau de board" />
+              <ListItemText
+                primary="Tableau de board"
+                sx={{ color: "#00008B" }}
+              />
             </ListItemButton>
             <ListItemButton onClick={handleClickCategories}>
               <ListItemIcon>
-                <Category />
+                <AssessmentOutlinedIcon sx={{ color: "#00008B" }} />
               </ListItemIcon>
-              <ListItemText primary="Projets" sx={{ color: "blue" }} />
+              <ListItemText primary="Projets" sx={{ color: "#00008B" }} />
               {openCategories ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={openCategories} timeout="auto" unmountOnExit>
@@ -154,11 +160,11 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <Category />
+                    <AssessmentOutlinedIcon sx={{ color: "#00008B" }} />
                   </ListItemIcon>
                   <ListItemText
                     primary="Liste des projets"
-                    sx={{ color: "blue" }}
+                    sx={{ color: "#00008B" }}
                   />
                 </ListItemButton>
                 <ListItemButton
@@ -169,20 +175,20 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <AddCircle />
+                    <AddCircle sx={{ color: "#00008B" }} />
                   </ListItemIcon>
                   <ListItemText
                     primary="Ajouter un projet"
-                    sx={{ color: "blue" }}
+                    sx={{ color: "#00008B" }}
                   />
                 </ListItemButton>
               </List>
             </Collapse>
             <ListItemButton onClick={handleClickProduits}>
               <ListItemIcon>
-                <Event />
+                <CalendarMonthOutlinedIcon sx={{ color: "#00008B" }} />
               </ListItemIcon>
-              <ListItemText primary="Entretien" sx={{ color: "blue" }} />
+              <ListItemText primary="Entretien" sx={{ color: "#00008B" }} />
               {openProduits ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={openProduits} timeout="auto" unmountOnExit>
@@ -195,9 +201,12 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <Event />
+                    <CalendarMonthOutlinedIcon sx={{ color: "#00008B" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Liste des entretiens" />
+                  <ListItemText
+                    primary="Liste des entretiens"
+                    sx={{ color: "#00008B" }}
+                  />
                 </ListItemButton>
                 <ListItemButton
                   sx={{ pl: 4 }}
@@ -207,17 +216,20 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <AddPhotoAlternate sx={{ color: "blue" }} />
+                    <AddCircle sx={{ color: "#00008B" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Planifier un entretien" />
+                  <ListItemText
+                    primary="Planifier un entretien"
+                    sx={{ color: "#00008B" }}
+                  />
                 </ListItemButton>
               </List>
             </Collapse>
             <ListItemButton onClick={handleClickStock}>
               <ListItemIcon>
-                <Inventory sx={{ color: "blue" }} />
+                <AddPhotoAlternate sx={{ color: "#00008B" }} />
               </ListItemIcon>
-              <ListItemText primary="Postes" />
+              <ListItemText primary="Postes" sx={{ color: "#00008B" }} />
               {openStock ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={openStock} timeout="auto" unmountOnExit>
@@ -230,9 +242,12 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <Inventory sx={{ color: "blue" }} />
+                    <AddPhotoAlternate sx={{ color: "#00008B" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Les Postes" />
+                  <ListItemText
+                    primary="Les Postes"
+                    sx={{ color: "#00008B" }}
+                  />
                 </ListItemButton>
                 <ListItemButton
                   selected={location.pathname === paths.stock}
@@ -242,9 +257,12 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <Inventory />
+                    <AddPhotoAlternate sx={{ color: "#00008B" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Les Candidatures" />
+                  <ListItemText
+                    primary="Les Candidatures"
+                    sx={{ color: "#00008B" }}
+                  />
                 </ListItemButton>
                 <ListItemButton
                   sx={{ pl: 4 }}
@@ -254,9 +272,12 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <AddCircle />
+                    <AddCircle sx={{ color: "#00008B" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Ajouter un poste" />
+                  <ListItemText
+                    primary="Ajouter un poste"
+                    sx={{ color: "#00008B" }}
+                  />
                 </ListItemButton>
               </List>
             </Collapse>
@@ -267,9 +288,9 @@ export default function HomeScreen() {
               }}
             >
               <ListItemIcon>
-                <ReportProblem />
+                <ReportProblem sx={{ color: "#00008B" }} />
               </ListItemIcon>
-              <ListItemText primary="Réclamations" />
+              <ListItemText primary="Réclamations" sx={{ color: "#00008B" }} />
             </ListItemButton>
             <ListItemButton
               selected={location.pathname === paths.historiquereclammations}
@@ -278,9 +299,9 @@ export default function HomeScreen() {
               }}
             >
               <ListItemIcon>
-                <ReportProblem />
+                <ReportProblem sx={{ color: "#00008B" }} />
               </ListItemIcon>
-              <ListItemText primary="Congés" />
+              <ListItemText primary="Congés" sx={{ color: "#00008B" }} />
             </ListItemButton>
             <ListItemButton
               selected={location.pathname === paths.historiqueCommandes}
@@ -289,15 +310,15 @@ export default function HomeScreen() {
               }}
             >
               <ListItemIcon>
-                <History />
+                <History sx={{ color: "#00008B" }} />
               </ListItemIcon>
-              <ListItemText primary="Absences" />
+              <ListItemText primary="Absences" sx={{ color: "#00008B" }} />
             </ListItemButton>
             <ListItemButton onClick={handleClickUsers}>
               <ListItemIcon>
-                <Group />
+                <Group sx={{ color: "#00008B" }} />
               </ListItemIcon>
-              <ListItemText primary="Utilisateurs" />
+              <ListItemText primary="Utilisateurs" sx={{ color: "#00008B" }} />
               {openUsers ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={openUsers} timeout="auto" unmountOnExit>
@@ -310,17 +331,23 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <Group />
+                    <Group sx={{ color: "#00008B" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Liste des utilisateurs" />
+                  <ListItemText
+                    primary="Liste des utilisateurs"
+                    sx={{ color: "#00008B" }}
+                  />
                 </ListItemButton>
               </List>
             </Collapse>
             <ListItemButton onClick={handleClickTables}>
               <ListItemIcon>
-                <Category />
+                <AssignmentOutlinedIcon sx={{ color: "#00008B" }} />
               </ListItemIcon>
-              <ListItemText primary="Test Techniques" />
+              <ListItemText
+                primary="Test Techniques"
+                sx={{ color: "#00008B" }}
+              />
               {openTables ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={openTables} timeout="auto" unmountOnExit>
@@ -333,9 +360,12 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <Category />
+                    <AssignmentOutlinedIcon sx={{ color: "#00008B" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Liste des Tests" />
+                  <ListItemText
+                    primary="Liste des Tests"
+                    sx={{ color: "#00008B" }}
+                  />
                 </ListItemButton>
                 <ListItemButton
                   sx={{ pl: 4 }}
@@ -345,9 +375,12 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <AddCircle />
+                    <AddCircle sx={{ color: "#00008B" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Ajouter une question " />
+                  <ListItemText
+                    primary="Ajouter une question "
+                    sx={{ color: "#00008B" }}
+                  />
                 </ListItemButton>
                 <ListItemButton
                   sx={{ pl: 4 }}
@@ -357,9 +390,12 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <AddCircle />
+                    <AssignmentOutlinedIcon sx={{ color: "#00008B" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Listes des questions " />
+                  <ListItemText
+                    primary="Listes des questions "
+                    sx={{ color: "#00008B" }}
+                  />
                 </ListItemButton>
                 <ListItemButton
                   sx={{ pl: 4 }}
@@ -369,9 +405,12 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <AddCircle />
+                    <AssignmentOutlinedIcon sx={{ color: "#00008B" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Afficher le résultat" />
+                  <ListItemText
+                    primary="Afficher le résultat"
+                    sx={{ color: "#00008B" }}
+                  />
                 </ListItemButton>
                 <ListItemButton
                   sx={{ pl: 4 }}
@@ -381,9 +420,12 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <AddCircle />
+                    <AddCircle sx={{ color: "#00008B" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Affecter un test " />
+                  <ListItemText
+                    primary="Affecter un test "
+                    sx={{ color: "#00008B" }}
+                  />
                 </ListItemButton>
                 <ListItemButton
                   sx={{ pl: 4 }}
@@ -393,17 +435,20 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <AddCircle />
+                    <AddCircle sx={{ color: "#00008B" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Ajouter un test " />
+                  <ListItemText
+                    primary="Ajouter un test "
+                    sx={{ color: "#00008B" }}
+                  />
                 </ListItemButton>
               </List>
             </Collapse>
             <ListItemButton onClick={handleClickEvents}>
               <ListItemIcon>
-                <Event />
+                <Event sx={{ color: "#00008B" }} />
               </ListItemIcon>
-              <ListItemText primary="Réunion" />
+              <ListItemText primary="Réunion" sx={{ color: "#00008B" }} />
               {openEvents ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={openEvents} timeout="auto" unmountOnExit>
@@ -416,9 +461,12 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <Event />
+                    <Event sx={{ color: "#00008B" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Liste des Réunions" />
+                  <ListItemText
+                    primary="Liste des Réunions"
+                    sx={{ color: "#00008B" }}
+                  />
                 </ListItemButton>
                 <ListItemButton
                   sx={{ pl: 4 }}
@@ -428,15 +476,19 @@ export default function HomeScreen() {
                   }}
                 >
                   <ListItemIcon>
-                    <AddCircle />
+                    <AddCircle sx={{ color: "#00008B" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Ajouter une réunion" />
+                  <ListItemText
+                    primary="Ajouter une réunion"
+                    sx={{ color: "#00008B" }}
+                  />
                 </ListItemButton>
               </List>
             </Collapse>
           </List>
         </nav>
         <div
+          sx={{ color: "#00008B" }}
           className="logout"
           onClick={() => {
             window.localStorage.clear();

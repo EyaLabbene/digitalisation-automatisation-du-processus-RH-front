@@ -110,7 +110,7 @@ export default function CreateMeeting() {
           }}
         >
           <Typography component="h1" variant="h5">
-            Create
+            Planifier une nouvelle réunions
           </Typography>
           <form onSubmit={handleSubmit}>
             <Grid item xs={12}>

@@ -58,6 +58,7 @@ export default function CurrentTest() {
           <img src={logo} />
         </div>
         <div className="title">{technicalTest.title}</div>
+        <br></br>
         <div className="questions">
           {technicalTest.questions.map((element, key) => {
             return (

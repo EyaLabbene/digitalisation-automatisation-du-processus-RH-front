@@ -113,7 +113,7 @@ function Leave() {
     {
       field: "employee",
       headerName: "Employé",
-      minWidth: 400,
+      minWidth: 200,
       flex: 1,
       valueFormatter: (params) => {
         return params.value?.Username;
@@ -123,7 +123,7 @@ function Leave() {
     {
       field: "start_date",
       headerName: "De ",
-      minWidth: 200,
+      minWidth: 150,
       valueFormatter: (params) => {
         const valueFormatted = new Date(params.value).toLocaleTimeString([], {
           hour: "2-digit",
